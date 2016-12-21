@@ -2,9 +2,12 @@
 declare(strict_types = 1);
 namespace Klapuch\Dataset;
 
-final class ParametrizedSqlQuery implements Query {
-	private const NAMED = 'string';
-	private const PLACEHOLDER = 'integer';
+final class ParameterizedSqlQuery implements Query {
+	private const NAME_APPROACH = 'string';
+	private const PLACEHOLDER_APPROACH = 'integer';
+	private const UNKNOWN_APPROACH = 'null';
+	private const PLACEHOLDER = '?';
+	private const NAME_PREFIX = ':';
 	private $statement;
 	private $parameters;
 
@@ -45,26 +48,52 @@ final class ParametrizedSqlQuery implements Query {
 	 * @return bool
 	 */
 	private function unused(array $parameters): bool {
-		if($this->approach($parameters) === self::PLACEHOLDER)
-			return count($parameters) !== substr_count($this->statement(), '?');
-		return count(
-			preg_grep(
-				'~^:[\w\d]+\z~',
-				array_map(
-					'trim',
-					array_unique(preg_split('~[\s]+~', $this->statement()))
-				)
-			)
-		) !== count($parameters);
+		$approaches = [
+			self::UNKNOWN_APPROACH => ['placeholders', 'names'],
+			self::PLACEHOLDER_APPROACH => ['placeholders'],
+			self::NAME_APPROACH => ['names'],
+		];
+		return count($parameters) !== array_sum(
+			array_map(function(string $type): int {
+				return count(call_user_func([$this, $type]));
+			},
+			$approaches[$this->approach($parameters)])
+		);
 	}
 
 	/**
-	 * Approach to the parameters
+	 * All the placeholders extracted from the statement
+	 * @return array
+	 */
+	private function placeholders(): array {
+		return array_fill(
+			0,
+			substr_count($this->statement(), self::PLACEHOLDER),
+			self::PLACEHOLDER
+		);
+	}
+
+	/**
+	 * All the names extracted from the statement
+	 * @return array
+	 */
+	private function names(): array {
+		return preg_grep(
+			'~^:[\w\d]+\z~',
+			array_map(
+				'trim',
+				array_unique(preg_split('~[\s]+~', $this->statement()))
+			)
+		);
+	}
+
+	/**
+	 * What approach is used for parameterized query
 	 * @param array $parameters
 	 * @return string
 	 */
 	private function approach(array $parameters): string {
-		return gettype(key($parameters));
+		return strtolower(gettype(key($parameters)));
 	}
 
 	/**
@@ -73,21 +102,21 @@ final class ParametrizedSqlQuery implements Query {
 	 * @return array
 	 */
 	private function adjustment(array $parameters): array {
-		if($this->approach($parameters) === self::PLACEHOLDER)
+		if($this->approach($parameters) === self::PLACEHOLDER_APPROACH)
 			return array_values($parameters);
 		return array_reduce(
 			array_keys(
 				array_filter(
 					$parameters,
 					function(string $name): bool {
-						return substr($name, 0, 1) !== ':';
+						return substr($name, 0, 1) !== self::NAME_PREFIX;
 					},
 					ARRAY_FILTER_USE_KEY
 				)
 			),
 			function(array $names, string $name) use($parameters): array {
 				unset($names[$name]);
-				$names[':' . $name] = $parameters[$name];
+				$names[self::NAME_PREFIX . $name] = $parameters[$name];
 				return $names;
 			},
 			$parameters

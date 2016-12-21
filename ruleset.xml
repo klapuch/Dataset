@@ -42,6 +42,7 @@
 		<exclude name="SlevomatCodingStandard.Namespaces.FullyQualifiedExceptions.NonFullyQualifiedException" />
 		<exclude name="SlevomatCodingStandard.Namespaces.MultipleUsesPerLine.MultipleUsesPerLine" />
 		<exclude name="SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse" />
+		<exclude name="SlevomatCodingStandard.Classes.UnusedPrivateElements.unusedMethod" />
 	</rule>
 
 	<rule ref="vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml">
