@@ -25,7 +25,7 @@ final class ParameterizedSqlQuery implements Query {
 			throw new \UnexpectedValueException(
 				'Parameters must be either named or bare placeholders'
 			);
-		} elseif($this->unused($this->parameters)) {
+		} elseif(!$this->used($this->statement(), $this->adjustment($this->parameters))) {
 			throw new \UnexpectedValueException(
 				'Not all parameters are used'
 			);
@@ -43,46 +43,80 @@ final class ParameterizedSqlQuery implements Query {
 	}
 
 	/**
-	 * Are some of the parameters unused?
+	 * Are the parameters used inside statement?
 	 * @param array $parameters
+	 * @param string $statement
 	 * @return bool
 	 */
-	private function unused(array $parameters): bool {
+	private function used(string $statement, array $parameters): bool {
+		$statementParameters = $this->statementParameters($statement, $parameters);
+		$matched = $this->matched($statementParameters, $parameters);
+		if($matched && $this->approach($parameters) === self::NAME_APPROACH) {
+			return count($parameters) === count(
+				array_intersect($statementParameters, array_keys($parameters))
+			);
+		}
+		return $matched;
+	}
+
+	/**
+	 * Parameters extracted from the statement
+	 * @param string $statement
+	 * @param array $parameters
+	 * @return array
+	 */
+	private function statementParameters(string $statement, array $parameters): array {
 		$approaches = [
 			self::UNKNOWN_APPROACH => ['placeholders', 'names'],
 			self::PLACEHOLDER_APPROACH => ['placeholders'],
 			self::NAME_APPROACH => ['names'],
 		];
-		return count($parameters) !== array_sum(
-			array_map(function(string $type): int {
-				return count(call_user_func([$this, $type]));
+		return array_reduce(
+			$approaches[$this->approach($parameters)],
+			function(array $parameters, string $type) use($statement): array {
+				return array_merge(
+					call_user_func_array([$this, $type], [$statement]),
+					$parameters
+				);
 			},
-			$approaches[$this->approach($parameters)])
+			[]
 		);
 	}
 
 	/**
+	 * Does the statement parameters match with parameters?
+	 * @param array $statementParameters
+	 * @param array $parameters
+	 * @return bool
+	 */
+	private function matched(array $statementParameters, array $parameters): bool {
+		return count($parameters) === count($statementParameters);
+	}
+
+	/**
 	 * All the placeholders extracted from the statement
+	 * @param string $statement
 	 * @return array
 	 */
-	private function placeholders(): array {
+	private function placeholders(string $statement): array {
 		return array_fill(
 			0,
-			substr_count($this->statement(), self::PLACEHOLDER),
+			substr_count($statement, self::PLACEHOLDER),
 			self::PLACEHOLDER
 		);
 	}
 
 	/**
 	 * All the names extracted from the statement
+	 * @param string $statement
 	 * @return array
 	 */
-	private function names(): array {
+	private function names(string $statement): array {
 		return preg_grep(
 			'~^:[\w\d]+\z~',
 			array_map(
 				'trim',
-				array_unique(preg_split('~[\s]+~', $this->statement()))
+				array_unique(preg_split('~[\s]+~', $statement))
 			)
 		);
 	}

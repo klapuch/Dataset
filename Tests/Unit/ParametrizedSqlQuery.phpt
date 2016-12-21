@@ -102,20 +102,6 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
 	}
 
-	public function testWeirdFormattedStatement() {
-		$statement = 'SELECT * FROM
-			world
-			WHERE name =
-			:name';
-		$parameters = [':name' => 'Dom'];
-		Assert::noError(function() use($statement, $parameters) {
-			(new Dataset\ParameterizedSqlQuery(
-				$statement,
-				$parameters
-			))->parameters();
-		});
-	}
-
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
@@ -133,6 +119,49 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 		$statement = 'SELECT * FROM world WHERE name = :name AND number = :number AND skill = :skill';
 		$parameters = [':name' => 'Dom', ':number' => 666];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
+	}
+
+	public function testWeirdFormattedStatement() {
+		$statement = 'SELECT * FROM
+			world
+			WHERE name =
+			:name';
+		$parameters = [':name' => 'Dom'];
+		Assert::noError(function() use($statement, $parameters) {
+			(new Dataset\ParameterizedSqlQuery(
+				$statement,
+				$parameters
+			))->parameters();
+		});
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Not all parameters are used
+	 */
+	public function testDifferentlyNamedParameters() {
+		$statement = 'SELECT * FROM world WHERE name = :name';
+		$parameters = [':foo' => 'Dom'];
+		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Not all parameters are used
+	 */
+	public function testCaseInsensitiveParameters() {
+		$statement = 'SELECT * FROM world WHERE name = :name';
+		$parameters = [':NAME' => 'Dom'];
+		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
+	}
+
+	public function testMultipleNamedParametersInStatement() {
+		$statement = 'SELECT :name FROM world WHERE name = :name';
+		$parameters = [':name' => 'Dom'];
+		Assert::noError(function() use($statement, $parameters) {
+			(new Dataset\ParameterizedSqlQuery(
+				$statement,
+				$parameters
+			))->parameters();
+		});
 	}
 }
 

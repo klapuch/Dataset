@@ -47,6 +47,7 @@
 
 	<rule ref="vendor/object-calisthenics/phpcs-calisthenics-rules/src/ObjectCalisthenics/ruleset.xml">
 		<exclude name="ObjectCalisthenics.ControlStructures.NoElse" />
+		<exclude name="ObjectCalisthenics.Metrics.MethodPerClassLimit.ClassTooManyMethods" />
 	</rule>
 
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
