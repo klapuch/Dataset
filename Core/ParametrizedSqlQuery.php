@@ -45,9 +45,7 @@ final class ParametrizedSqlQuery implements Query {
 	 * @return string
 	 */
 	private function approach(array $parameters): string {
-		return gettype(key($parameters)) === self::NAMED
-			? self::NAMED
-			: self::PLACEHOLDER;
+		return gettype(key($parameters));
 	}
 
 	/**
