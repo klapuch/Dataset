@@ -40,6 +40,25 @@ final class ParametrizedSqlQuery implements Query {
 	}
 
 	/**
+	 * Are some of the parameters unused?
+	 * @param array $parameters
+	 * @return bool
+	 */
+	private function unused(array $parameters): bool {
+		if($this->approach($parameters) === self::PLACEHOLDER)
+			return count($parameters) !== substr_count($this->statement(), '?');
+		return count(
+			preg_grep(
+				'~^:[\w\d]+\z~',
+				array_map(
+					'trim',
+					array_unique(preg_split('~[\s]+~', $this->statement()))
+				)
+			)
+		) !== count($parameters);
+	}
+
+	/**
 	 * Approach to the parameters
 	 * @param array $parameters
 	 * @return string
@@ -73,24 +92,5 @@ final class ParametrizedSqlQuery implements Query {
 			},
 			$parameters
 		);
-	}
-
-	/**
-	 * Are some of the parameters unused?
-	 * @param array $parameters
-	 * @return bool
-	 */
-	private function unused(array $parameters): bool {
-		if($this->approach($parameters) === self::PLACEHOLDER)
-			return count($parameters) !== substr_count($this->statement(), '?');
-		return count(
-			preg_grep(
-				'~^:[\w\d]+\z~',
-				array_map(
-					'trim',
-					array_unique(preg_split('~[\s]+~', $this->statement()))
-				)
-			)
-		) !== count($parameters);
 	}
 }
