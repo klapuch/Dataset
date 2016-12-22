@@ -111,7 +111,6 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
 	}
 
-
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */

@@ -2,6 +2,9 @@
 declare(strict_types = 1);
 namespace Klapuch\Dataset;
 
+/**
+ * Parameterized query for SQL databases
+ */
 final class ParameterizedSqlQuery implements Query {
 	private const NAME_APPROACH = 'string';
 	private const PLACEHOLDER_APPROACH = 'integer';
@@ -84,7 +87,7 @@ final class ParameterizedSqlQuery implements Query {
 	}
 
 	/**
-	 * Does the statement parameters match with parameters?
+	 * Do the statement parameters match with parameters?
 	 * @param array $statementParameters
 	 * @param array $parameters
 	 * @return bool
