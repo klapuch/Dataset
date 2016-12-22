@@ -1,0 +1,117 @@
+<?php
+/**
+ * @testCase
+ * @phpVersion > 7.1
+ */
+namespace Klapuch\Dataset\Unit;
+
+use Tester;
+use Tester\Assert;
+use Klapuch\Dataset;
+
+require __DIR__ . '/../bootstrap.php';
+
+final class ReachableSqlSort extends Tester\TestCase {
+	public function testReachableDirections() {
+		Assert::same(
+			'bar',
+			(new Dataset\ReachableSqlSort(
+				new Dataset\FakeSelection('bar'),
+				['name' => 'asc', 'number' => 'desc']
+			))->expression('foo')
+		);
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
+	 */
+	public function testUnknownDirection() {
+		(new Dataset\ReachableSqlSort(
+			new Dataset\FakeSelection(),
+			['name' => 'up']
+		))->expression('foo');
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
+	 */
+	public function testMultipleUnknownDirections() {
+		(new Dataset\ReachableSqlSort(
+			new Dataset\FakeSelection(),
+			['name' => 'up', 'number' => 'down']
+		))->expression('foo');
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
+	 */
+	public function testPartiallyUnknownDirections() {
+		(new Dataset\ReachableSqlSort(
+			new Dataset\FakeSelection(),
+			['name' => 'desc', 'number' => 'down']
+		))->expression('foo');
+	}
+
+	public function testCaseInsensitiveDirections() {
+		Assert::noError(function() {
+			(new Dataset\ReachableSqlSort(
+				new Dataset\FakeSelection(''),
+				['name' => 'DesC', 'number' => 'AsC']
+			))->expression('foo');
+		});
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
+	 */
+	public function testDirectionsConsistedFromAscOrDescWords() {
+		(new Dataset\ReachableSqlSort(
+			new Dataset\FakeSelection(),
+			['name' => 'ascend', 'number' => 'descend']
+		))->expression('foo');
+	}
+
+	public function testEntirelyEmptySorts() {
+		Assert::noError(function() {
+			(new Dataset\ReachableSqlSort(
+				new Dataset\FakeSelection(''),
+				[]
+			))->expression('foo');
+		});
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
+	 */
+	public function testEmptyDirections() {
+		(new Dataset\ReachableSqlSort(
+			new Dataset\FakeSelection(),
+			['name' => null]
+		))->expression('foo');
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
+	 */
+	public function testPartiallyEmptyDirections() {
+		Assert::noError(function() {
+			(new Dataset\ReachableSqlSort(
+				new Dataset\FakeSelection(),
+				['name' => 'asc', 'number' => null]
+			))->expression('foo');
+		});
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
+	 */
+	public function testWhiteSpaceEmptyDirection() {
+		(new Dataset\ReachableSqlSort(
+			new Dataset\FakeSelection(),
+			['name' => ' ']
+		))->expression('foo');
+	}
+}
+
+
+(new ReachableSqlSort())->run();
