@@ -149,6 +149,15 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
+	public function testNamedParametersWithSpaceAfterDoubleDot() {
+		$statement = 'SELECT * FROM world WHERE name = : name';
+		$parameters = [':name' => 'Dom'];
+		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Not all parameters are used
+	 */
 	public function testCaseInsensitiveParameters() {
 		$statement = 'SELECT * FROM world WHERE name = :name';
 		$parameters = [':NAME' => 'Dom'];
