@@ -155,6 +155,28 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
 	}
 
+	public function testNoSpacesWithPlaceholderParameters() {
+		$statement = 'INSERT INTO world (?, ?)';
+		$parameters = ['foo', 'bar'];
+		Assert::noError(function() use($statement, $parameters) {
+			(new Dataset\ParameterizedSqlQuery(
+				$statement,
+				$parameters
+			))->parameters();
+		});
+	}
+
+	public function testNoSpacesWithNamedParameters() {
+		$statement = 'INSERT INTO world (:name, :foo)';
+		$parameters = [':name' => 'foo', ':foo' => 'name'];
+		Assert::noError(function() use($statement, $parameters) {
+			(new Dataset\ParameterizedSqlQuery(
+				$statement,
+				$parameters
+			))->parameters();
+		});
+	}
+
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
