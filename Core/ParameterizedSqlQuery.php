@@ -116,7 +116,7 @@ final class ParameterizedSqlQuery implements Query {
 	 */
 	private function names(string $statement): array {
 		return preg_grep(
-			'~^:[\w\d]+$~',
+			sprintf('~^%s[\w\d]+$~', self::NAME_PREFIX),
 			array_unique(explode(' ', $statement))
 		);
 	}
