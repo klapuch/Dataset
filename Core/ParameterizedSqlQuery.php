@@ -20,7 +20,7 @@ final class ParameterizedSqlQuery implements Query {
 	}
 
 	public function statement(): string {
-		return $this->statement;
+		return trim(preg_replace('~\s+~', ' ', $this->statement));
 	}
 
 	public function parameters(): array {
@@ -116,16 +116,13 @@ final class ParameterizedSqlQuery implements Query {
 	 */
 	private function names(string $statement): array {
 		return preg_grep(
-			'~^:[\w\d]+\z~',
-			array_map(
-				'trim',
-				array_unique(preg_split('~[\s]+~', $statement))
-			)
+			'~^:[\w\d]+$~',
+			array_unique(explode(' ', $statement))
 		);
 	}
 
 	/**
-	 * What approach is used for parameterized query
+	 * What approach is used for parameterized query?
 	 * @param array $parameters
 	 * @return string
 	 */

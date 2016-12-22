@@ -123,14 +123,17 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	public function testWeirdFormattedStatement() {
 		$statement = 'SELECT * FROM
 			world
-			WHERE name =
-			:name';
+			WHERE name =               
+				:name           
+';
 		$parameters = [':name' => 'Dom'];
-		Assert::noError(function() use($statement, $parameters) {
-			(new Dataset\ParameterizedSqlQuery(
-				$statement,
-				$parameters
-			))->parameters();
+		$query = new Dataset\ParameterizedSqlQuery(
+			$statement,
+			$parameters
+		);
+		Assert::same('SELECT * FROM world WHERE name = :name', $query->statement());
+		Assert::noError(function() use($query) {
+			$query->parameters();
 		});
 	}
 
