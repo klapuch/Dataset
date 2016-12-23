@@ -7,6 +7,7 @@ namespace Klapuch\Dataset;
  */
 final class SqlSort implements Selection {
 	private const SEPARATOR = ', ';
+	private const CLAUSE = 'ORDER BY';
 	private $criteria;
 
 	public function __construct(array $criteria) {
@@ -14,17 +15,41 @@ final class SqlSort implements Selection {
 	}
 
 	public function expression(string $source): string {
-		return $source . $this->clause($source, $this->criteria);
+		return $this->put(
+			$this->criteria,
+			preg_replace('~\s+~', ' ', $source)
+		);
 	}
 
 	public function criteria(array $source): array {
 		return $source;
 	}
 
+	/**
+	 * Put the criteria to the source
+	 * @param array $criteria
+	 * @param string source
+	 * @return string
+	 */
+	private function put(array $criteria, string $source): string {
+		if($this->sorted($source)) {
+			return preg_replace(
+				sprintf('~%s.+?(?=$| LIMIT)~i', self::CLAUSE),
+				$this->clause($source, $criteria),
+				$source
+			);
+		}
+		return $source . ' ' . $this->clause($source, $this->criteria);
+	}
+
+	/**
+	 * Clause containing sorts
+	 * @param string $source
+	 * @param array $criteria
+	 * @return string
+	 */
 	private function clause(string $source, array $criteria): string {
-		if($this->sorted($source))
-			return self::SEPARATOR . $this->sorts($criteria);
-		return sprintf(' ORDER BY %s', $this->sorts($criteria));
+		return self::CLAUSE . ' ' . $this->sorts($criteria);
 	}
 
 	/**
@@ -33,7 +58,7 @@ final class SqlSort implements Selection {
 	 * @return bool
 	 */
 	private function sorted(string $source): bool {
-		return stripos($source, 'ORDER BY') !== false;
+		return preg_match(sprintf('~%s~i', self::CLAUSE), $source) === 1;
 	}
 
 	/**

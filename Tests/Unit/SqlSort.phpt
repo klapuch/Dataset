@@ -51,10 +51,40 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testStatedOrderClauseWithPrecedence() {
+	public function testReplacingSingleOrderClauseByPassedSort() {
 		$source = 'SELECT * FROM world ORDER BY name DESC';
 		Assert::same(
-			'SELECT * FROM world ORDER BY name DESC, number ASC',
+			'SELECT * FROM world ORDER BY number ASC',
+			(new Dataset\SqlSort(
+				['number' => 'ASC']
+			))->expression($source)
+		);
+	}
+
+	public function testAlreadyStatedOrderClauseWithInvertedDirection() {
+		$source = 'SELECT * FROM world ORDER BY name DESC';
+		Assert::same(
+			'SELECT * FROM world ORDER BY name ASC',
+			(new Dataset\SqlSort(
+				['name' => 'ASC']
+			))->expression($source)
+		);
+	}
+
+	public function testSameSortAsOrderClause() {
+		$source = 'SELECT * FROM world ORDER BY name DESC';
+		Assert::same(
+			'SELECT * FROM world ORDER BY name DESC',
+			(new Dataset\SqlSort(
+				['name' => 'DESC']
+			))->expression($source)
+		);
+	}
+
+	public function testReplacingMultipleOrderClausesByPassedSort() {
+		$source = 'SELECT * FROM world ORDER BY name DESC, skill ASC';
+		Assert::same(
+			'SELECT * FROM world ORDER BY number ASC',
 			(new Dataset\SqlSort(
 				['number' => 'ASC']
 			))->expression($source)
@@ -64,10 +94,32 @@ final class SqlSort extends Tester\TestCase {
 	public function testAlreadyStatedLowerCaseOrderClause() {
 		$source = 'SELECT * FROM world order by name DESC';
 		Assert::same(
-			'SELECT * FROM world order by name DESC, number ASC',
+			'SELECT * FROM world ORDER BY number ASC',
 			(new Dataset\SqlSort(
 				['number' => 'ASC']
 			))->expression($source)
+		);
+	}
+
+	public function testWeirdFormattedOrderClause() {
+		$source = 'SELECT * FROM world
+								order
+					by
+							name DESC
+			  ';
+		Assert::same(
+			'SELECT * FROM world ORDER BY number ASC',
+			(new Dataset\SqlSort(
+				['number' => 'ASC']
+			))->expression($source)
+		);
+	}
+
+	public function testReplacingOrderClauseWithoutAffectingLimit() {
+		$source = 'SELECT * FROM world ORDER BY number DESC LimiT 5';
+		Assert::same(
+			'SELECT * FROM world ORDER BY name DESC LimiT 5',
+			(new Dataset\SqlSort(['name' => 'DESC']))->expression($source)
 		);
 	}
 }
