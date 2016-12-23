@@ -34,7 +34,7 @@ final class SqlSort implements Selection {
 	private function put(array $criteria, string $source): string {
 		if($this->sorted($source)) {
 			return preg_replace(
-				sprintf('~%s.+?(?=$| LIMIT)~i', self::CLAUSE),
+				sprintf('~%s.+?(?=$| LIMIT| OFFSET)~i', self::CLAUSE),
 				$this->clause($criteria),
 				$source
 			);
