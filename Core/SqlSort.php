@@ -35,20 +35,19 @@ final class SqlSort implements Selection {
 		if($this->sorted($source)) {
 			return preg_replace(
 				sprintf('~%s.+?(?=$| LIMIT)~i', self::CLAUSE),
-				$this->clause($source, $criteria),
+				$this->clause($criteria),
 				$source
 			);
 		}
-		return $source . ' ' . $this->clause($source, $this->criteria);
+		return $source . ' ' . $this->clause($this->criteria);
 	}
 
 	/**
 	 * Clause containing sorts
-	 * @param string $source
 	 * @param array $criteria
 	 * @return string
 	 */
-	private function clause(string $source, array $criteria): string {
+	private function clause(array $criteria): string {
 		return self::CLAUSE . ' ' . $this->sorts($criteria);
 	}
 
