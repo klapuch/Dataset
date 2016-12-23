@@ -131,6 +131,14 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
+	public function testReplacingOrderClauseWithoutAffectingLimitAndOffset() {
+		$source = 'SELECT * FROM world ORDER BY number DESC LIMIT 5 OFFSET 10';
+		Assert::same(
+			'SELECT * FROM world ORDER BY name DESC LIMIT 5 OFFSET 10',
+			(new Dataset\SqlSort(['name' => 'DESC']))->expression($source)
+		);
+	}
+
 	/* TODO: Desired behavior
 	public function testPuttingOrderClauseBeforeLimit() {
 		$source = 'SELECT * FROM world LIMIT 5';
