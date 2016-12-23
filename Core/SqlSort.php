@@ -43,21 +43,21 @@ final class SqlSort implements Selection {
 	}
 
 	/**
-	 * Clause containing sorts
-	 * @param array $criteria
-	 * @return string
-	 */
-	private function clause(array $criteria): string {
-		return self::CLAUSE . ' ' . $this->sorts($criteria);
-	}
-
-	/**
 	 * Is the source already sorted?
 	 * @param string $source
 	 * @return bool
 	 */
 	private function sorted(string $source): bool {
 		return preg_match(sprintf('~%s~i', self::CLAUSE), $source) === 1;
+	}
+
+	/**
+	 * Clause containing sorts
+	 * @param array $criteria
+	 * @return string
+	 */
+	private function clause(array $criteria): string {
+		return self::CLAUSE . ' ' . $this->sorts($criteria);
 	}
 
 	/**
