@@ -15,9 +15,11 @@ final class SqlSort implements Selection {
 	}
 
 	public function expression(string $source): string {
-		return $this->put(
-			$this->criteria,
-			preg_replace('~\s+~', ' ', $source)
+		return trim(
+			$this->put(
+				$this->criteria,
+				preg_replace('~\s+~', ' ', $source)
+			)
 		);
 	}
 
@@ -32,14 +34,38 @@ final class SqlSort implements Selection {
 	 * @return string
 	 */
 	private function put(array $criteria, string $source): string {
-		if($this->sorted($source)) {
-			return preg_replace(
-				sprintf('~%s.+?(?=$| LIMIT| OFFSET)~i', self::CLAUSE),
-				$this->clause($criteria),
-				$source
-			);
-		}
-		return $source . ' ' . $this->clause($this->criteria);
+		if($this->sorted($source))
+			return $this->replace($criteria, $source);
+		return $this->foist($criteria, $source);
+	}
+
+	/**
+	 * Replaced old ORDER BY clause in source by the new given one in criteria
+	 * @param array $criteria
+	 * @param string $source
+	 * @return string
+	 */
+	private function replace(array $criteria, string $source): string {
+		return preg_replace(
+			sprintf('~%s.+?(?=$|\s+LIMIT|\s+OFFSET)~i', self::CLAUSE),
+			$this->clause($criteria),
+			$source
+		);
+	}
+
+	/**
+	 * Criteria foisted to the source
+	 * @param array $criteria
+	 * @param string $source
+	 * @return string
+	 */
+	private function foist(array $criteria, string $source): string {
+		return preg_replace(
+			'~\s+(?=$|LIMIT|OFFSET)~i',
+			' ' . $this->clause($this->criteria) . ' ',
+			$source . ' ',
+			1
+		);
 	}
 
 	/**

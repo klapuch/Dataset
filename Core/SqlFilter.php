@@ -39,7 +39,7 @@ final class SqlFilter implements Selection {
 	 */
 	private function put(array $criteria, string $source): string {
 		if($this->constrained($source))
-			return $this->concatenation($criteria, $source);
+			return $this->extend($criteria, $source);
 		return $this->foist($criteria, $source);
 	}
 
@@ -53,12 +53,12 @@ final class SqlFilter implements Selection {
 	}
 
 	/**
-	 * Criteria concatenated with the source
+	 * Extended source by the criteria
 	 * @param array $criteria
 	 * @param string $source
 	 * @return string
 	 */
-	private function concatenation(array $criteria, string $source): string {
+	private function extend(array $criteria, string $source): string {
 		$clauses = $this->clauses($source);
 		return substr_replace(
 			$source,
