@@ -6,12 +6,12 @@ namespace Klapuch\Dataset;
  * Filter selection for SQL
  */
 final class SqlFilter implements Selection {
-	private const FROM = 0;
-	private const END_CLAUSES = 1;
-	private const MATCH = 0;
-	private const POSITION = 1;
-	private const OPERATOR = 'AND';
-	private const SEPARATOR = ' ' . self::OPERATOR . ' ';
+	private const FROM = 0,
+		END_CLAUSES = 1;
+	private const MATCH = 0,
+		POSITION = 1;
+	private const OPERATOR = 'AND',
+		SEPARATOR = ' ' . self::OPERATOR . ' ';
 	private const CLAUSE = 'WHERE';
 	private $criteria;
 
