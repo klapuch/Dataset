@@ -38,6 +38,15 @@ final class SqlSort implements Selection {
 	}
 
 	/**
+	 * Is the source already sorted?
+	 * @param string $source
+	 * @return bool
+	 */
+	private function sorted(string $source): bool {
+		return stripos($source, self::CLAUSE) !== false;
+	}
+
+	/**
 	 * Replaced old ORDER BY clause in source by the new given one in criteria
 	 * @param array $criteria
 	 * @param string $source
@@ -66,15 +75,6 @@ final class SqlSort implements Selection {
 				1
 			)
 		);
-	}
-
-	/**
-	 * Is the source already sorted?
-	 * @param string $source
-	 * @return bool
-	 */
-	private function sorted(string $source): bool {
-		return stripos($source, self::CLAUSE) !== false;
 	}
 
 	/**
