@@ -25,7 +25,7 @@ final class ReachableSqlSort extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
 	 */
-	public function testUnknownDirection() {
+	public function testThrowingOnUnknownDirection() {
 		(new Dataset\ReachableSqlSort(
 			new Dataset\FakeSelection(),
 			['name' => 'up']
@@ -35,7 +35,7 @@ final class ReachableSqlSort extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
 	 */
-	public function testMultipleUnknownDirections() {
+	public function testThrowingOnMultipleUnknownDirections() {
 		(new Dataset\ReachableSqlSort(
 			new Dataset\FakeSelection(),
 			['name' => 'up', 'number' => 'down']
@@ -45,14 +45,14 @@ final class ReachableSqlSort extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
 	 */
-	public function testPartiallyUnknownDirections() {
+	public function testThrowingOnPartiallyUnknownDirections() {
 		(new Dataset\ReachableSqlSort(
 			new Dataset\FakeSelection(),
 			['name' => 'desc', 'number' => 'down']
 		))->expression('foo');
 	}
 
-	public function testCaseInsensitiveDirections() {
+	public function testAllowingCaseInsensitiveDirections() {
 		Assert::noError(function() {
 			(new Dataset\ReachableSqlSort(
 				new Dataset\FakeSelection(''),
@@ -64,7 +64,7 @@ final class ReachableSqlSort extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
 	 */
-	public function testDirectionsConsistedFromAscOrDescWords() {
+	public function testThrowingOnDirectionsConsistedFromAscOrDescWords() {
 		(new Dataset\ReachableSqlSort(
 			new Dataset\FakeSelection(),
 			['name' => 'ascend', 'number' => 'descend']
@@ -83,7 +83,7 @@ final class ReachableSqlSort extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
 	 */
-	public function testEmptyDirections() {
+	public function testThrowingOnEmptyDirections() {
 		(new Dataset\ReachableSqlSort(
 			new Dataset\FakeSelection(),
 			['name' => null]
@@ -93,7 +93,7 @@ final class ReachableSqlSort extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
 	 */
-	public function testPartiallyEmptyDirections() {
+	public function testThrowingOnPartiallyEmptyDirections() {
 		Assert::noError(function() {
 			(new Dataset\ReachableSqlSort(
 				new Dataset\FakeSelection(),
@@ -105,7 +105,7 @@ final class ReachableSqlSort extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
 	 */
-	public function testWhiteSpaceEmptyDirection() {
+	public function testThrowingOnWhiteSpaceEmptyDirection() {
 		(new Dataset\ReachableSqlSort(
 			new Dataset\FakeSelection(),
 			['name' => ' ']

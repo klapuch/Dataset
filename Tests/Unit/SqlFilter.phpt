@@ -39,7 +39,7 @@ final class SqlFilter extends Tester\TestCase {
 		);
 	}
 
-	public function testWeirdFormattedQuery() {
+	public function testReformatting() {
 		Assert::same(
 			'SELECT * FROM world WHERE name = :name AND skill = :skill ORDER BY foo',
 			(new Dataset\SqlFilter(

@@ -27,13 +27,10 @@ final class SqlSort extends Tester\TestCase {
 	}
 
 	public function testEmptyCriteria() {
-		Assert::same(
-			[],
-			(new Dataset\SqlSort([]))->criteria([])
-		);
+		Assert::same([], (new Dataset\SqlSort([]))->criteria([]));
 	}
 
-	public function testAddedOrderClause() {
+	public function testAddingOrderClause() {
 		$source = 'SELECT * FROM world';
 		Assert::same(
 			'SELECT * FROM world ORDER BY name DESC',
@@ -41,7 +38,7 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testMultipleAddedOrderClauses() {
+	public function testAddingMultipleOrderClauses() {
 		$source = 'SELECT * FROM world';
 		Assert::same(
 			'SELECT * FROM world ORDER BY name DESC, number ASC',
@@ -51,7 +48,7 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testReplacingSingleOrderClauseByPassedSort() {
+	public function testReplacingSingleOrderClauseByPassedOne() {
 		$source = 'SELECT * FROM world ORDER BY name DESC';
 		Assert::same(
 			'SELECT * FROM world ORDER BY number ASC',
@@ -61,7 +58,7 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testAlreadyStatedOrderClauseWithInvertedDirection() {
+	public function testReplacingWithInvertedOne() {
 		$source = 'SELECT * FROM world ORDER BY name DESC';
 		Assert::same(
 			'SELECT * FROM world ORDER BY name ASC',
@@ -71,7 +68,7 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testSameSortAsOrderClause() {
+	public function testSamePassedAsStated() {
 		$source = 'SELECT * FROM world ORDER BY name DESC';
 		Assert::same(
 			'SELECT * FROM world ORDER BY name DESC',
@@ -91,7 +88,7 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testAlreadyStatedLowerCaseOrderClause() {
+	public function testReplacingStatedLowerCaseOrderClause() {
 		$source = 'SELECT * FROM world order by name DESC';
 		Assert::same(
 			'SELECT * FROM world ORDER BY number ASC',
@@ -101,7 +98,7 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testWeirdFormattedOrderClause() {
+	public function testReformatting() {
 		$source = 'SELECT * FROM world
 								order
 					by
@@ -138,6 +135,14 @@ final class SqlSort extends Tester\TestCase {
 			(new Dataset\SqlSort(['name' => 'DESC']))->expression($source)
 		);
 	}
+
+	/**public function testPuttingOrderClauseWithoutAffectingOtherClauses() {
+		$source = 'SELECT * FROM world WHERE x = y DESC LIMIT 5 OFFSET 10';
+		Assert::same(
+			'SELECT * FROM world WHERE x = y ORDER BY name DESC LIMIT 5 OFFSET 10',
+			(new Dataset\SqlSort(['name' => 'DESC']))->expression($source)
+		);
+	}*/
 
 	/* TODO: Desired behavior
 	public function testPuttingOrderClauseBeforeLimit() {

@@ -15,13 +15,13 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Parameters must be either named or bare placeholders
 	 */
-	public function testMismatch() {
+	public function testThrowingOnMismatch() {
 		$statement = 'SELECT * FROM world';
 		$parameters = [':name' => 'Dom', 1 => 666];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
 	}
 
-	public function testParametersWithouthDoubleDotPrefix() {
+	public function testAddingMissingColon() {
 		$statement = 'SELECT * FROM world WHERE name = :name AND number = :number';
 		$parameters = ['name' => 'Dom', 'number' => 666];
 		$query = new Dataset\ParameterizedSqlQuery($statement, $parameters);
@@ -29,7 +29,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 		Assert::same($statement, $query->statement());
 	}
 
-	public function testParametersPartiallyWithouthDoubleDotPrefix() {
+	public function testAddingMissingColonIfNeeded() {
 		$statement = 'SELECT * FROM world WHERE name = :name AND number = :number';
 		$parameters = ['name' => 'Dom', ':number' => 666];
 		$query = new Dataset\ParameterizedSqlQuery($statement, $parameters);
@@ -37,7 +37,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 		Assert::same($statement, $query->statement());
 	}
 
-	public function testBarePlaceholders() {
+	public function testBareParameters() {
 		$statement = 'SELECT * FROM world WHERE name = ? AND number = ?';
 		$parameters = ['Dom', 666];
 		$query = new Dataset\ParameterizedSqlQuery($statement, $parameters);
@@ -45,13 +45,13 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 		Assert::same($statement, $query->statement());
 	}
 
-	public function testEmptyParametersWithoutNeed() {
+	public function testEmptyParametersWithoutUsage() {
 		$statement = 'SELECT * FROM world';
 		$query = new Dataset\ParameterizedSqlQuery($statement, []);
 		Assert::same([], $query->parameters());
 	}
 
-	public function testBarePlaceholdersWithMessedUpPositions() {
+	public function testArrangingMessedUpPositions() {
 		$statement = 'SELECT * FROM world WHERE name = ? AND number = ?';
 		$parameters = [1 => 'Dom', 4 => 666];
 		$query = new Dataset\ParameterizedSqlQuery($statement, $parameters);
@@ -62,7 +62,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testNotEnoughNeededPlaceholderParametersAsEmptySet() {
+	public function testThrowingOnNotEnoughBareParametersAsEmptyOnes() {
 		$statement = 'SELECT * FROM world WHERE name = ?';
 		(new Dataset\ParameterizedSqlQuery($statement, []))->parameters();
 	}
@@ -70,7 +70,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testNotEnoughNeededNamedParametersAsEmptySet() {
+	public function testThrowingOnNotEnoughNamedParametersAsEmptyOnes() {
 		$statement = 'SELECT * FROM world WHERE name = :name';
 		(new Dataset\ParameterizedSqlQuery($statement, []))->parameters();
 	}
@@ -78,7 +78,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testNotEnoughNeededParameters() {
+	public function testThrowingOnAllOverusedBareParameters() {
 		$statement = 'SELECT * FROM world';
 		$parameters = ['Dom', 666];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
@@ -87,7 +87,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testSomeUsedPlaceholderParameters() {
+	public function testThrowingOnSomeOverusedBareParameters() {
 		$statement = 'SELECT * FROM world WHERE name = ?';
 		$parameters = ['Dom', 666];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
@@ -96,7 +96,16 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testSomeUsedNamedParameters() {
+	public function testThrowingOnAllOverusedNamedParameters() {
+		$statement = 'SELECT * FROM world';
+		$parameters = [':name' => 'Dom', ':number' => 666];
+		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Not all parameters are used
+	 */
+	public function testThrowingOnSomeOverusedNamedParameters() {
 		$statement = 'SELECT * FROM world WHERE name = :name';
 		$parameters = [':name' => 'Dom', ':number' => 666];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
@@ -105,7 +114,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testNotEnoughPlaceholderParameters() {
+	public function testThrowingOnNotEnoughPlaceholderParameters() {
 		$statement = 'SELECT * FROM world WHERE name = ? AND number = ? AND skill = ?';
 		$parameters = ['Dom', 666];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
@@ -114,13 +123,13 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testNotEnoughNamedParameters() {
+	public function testThrowingOnNotEnoughNamedParameters() {
 		$statement = 'SELECT * FROM world WHERE name = :name AND number = :number AND skill = :skill';
 		$parameters = [':name' => 'Dom', ':number' => 666];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
 	}
 
-	public function testWeirdFormattedStatement() {
+	public function testReformatting() {
 		$statement = 'SELECT * FROM
 			world
 			WHERE name =               
@@ -140,7 +149,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testDifferentlyNamedParameters() {
+	public function testThrowingOnDifferentlyNamedParameters() {
 		$statement = 'SELECT * FROM world WHERE name = :name';
 		$parameters = [':foo' => 'Dom'];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
@@ -149,13 +158,13 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testNamedParametersWithSpaceAfterDoubleDot() {
+	public function testThrowingOnSpaceAfterColon() {
 		$statement = 'SELECT * FROM world WHERE name = : name';
 		$parameters = [':name' => 'Dom'];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
 	}
 
-	public function testNoSpacesWithPlaceholderParameters() {
+	public function testNoSpacesAroundPlaceholderParameters() {
 		$statement = 'INSERT INTO world (?, ?)';
 		$parameters = ['foo', 'bar'];
 		Assert::noError(function() use($statement, $parameters) {
@@ -166,7 +175,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 		});
 	}
 
-	public function testNoSpacesWithNamedParameters() {
+	public function testNoSpacesAroundNamedParameters() {
 		$statement = 'INSERT INTO world (:name, :foo)';
 		$parameters = [':name' => 'foo', ':foo' => 'name'];
 		Assert::noError(function() use($statement, $parameters) {
@@ -180,7 +189,7 @@ final class ParameterizedSqlQuery extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Not all parameters are used
 	 */
-	public function testCaseInsensitiveParameters() {
+	public function testThrowingOnCaseInsensitiveNamedParameters() {
 		$statement = 'SELECT * FROM world WHERE name = :name';
 		$parameters = [':NAME' => 'Dom'];
 		(new Dataset\ParameterizedSqlQuery($statement, $parameters))->parameters();
