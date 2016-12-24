@@ -1,6 +1,6 @@
 {
 	"name": "klapuch/dataset",
-	"description": "Skeleton",
+	"description": "Operations applicable to datasets",
 	"type": "library",
 	"homepage": "https://www.github.com/klapuch/Dataset",
 	"authors": [
