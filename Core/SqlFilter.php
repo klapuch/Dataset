@@ -108,6 +108,15 @@ final class SqlFilter implements Selection {
 	}
 
 	/**
+	 * Clause containing sorts
+	 * @param array $criteria
+	 * @return string
+	 */
+	private function clause(array $criteria): string {
+		return self::CLAUSE . ' ' . $this->conditions($criteria);
+	}
+
+	/**
 	 * Created all the conditions from the criteria
 	 * @param array $criteria
 	 * @return string
@@ -156,14 +165,5 @@ final class SqlFilter implements Selection {
 	 */
 	private function column(string $field): string {
 		return str_replace(':', '', $field);
-	}
-
-	/**
-	 * Clause containing sorts
-	 * @param array $criteria
-	 * @return string
-	 */
-	private function clause(array $criteria): string {
-		return self::CLAUSE . ' ' . $this->conditions($criteria);
 	}
 }
