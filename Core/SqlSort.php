@@ -15,11 +15,9 @@ final class SqlSort implements Selection {
 	}
 
 	public function expression(string $source): string {
-		return trim(
-			$this->put(
-				$this->criteria,
-				preg_replace('~\s+~', ' ', $source)
-			)
+		return $this->put(
+			$this->criteria,
+			preg_replace('~\s+~', ' ', $source)
 		);
 	}
 
@@ -60,11 +58,13 @@ final class SqlSort implements Selection {
 	 * @return string
 	 */
 	private function foist(array $criteria, string $source): string {
-		return preg_replace(
-			'~\s+(?=$|LIMIT|OFFSET)~i',
-			' ' . $this->clause($this->criteria) . ' ',
-			$source . ' ',
-			1
+		return trim(
+			preg_replace(
+				'~\s+(?=$|LIMIT|OFFSET)~i',
+				' ' . $this->clause($this->criteria) . ' ',
+				$source . ' ',
+				1
+			)
 		);
 	}
 
