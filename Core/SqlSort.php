@@ -45,7 +45,7 @@ final class SqlSort implements Selection {
 	 */
 	private function replace(array $criteria, string $source): string {
 		return preg_replace(
-			sprintf('~%s.+?(?=$|\s+LIMIT|\s+OFFSET)~i', self::CLAUSE),
+			sprintf('~%s.+?(?=$| LIMIT| OFFSET)~i', self::CLAUSE),
 			$this->clause($criteria),
 			$source
 		);
@@ -74,7 +74,7 @@ final class SqlSort implements Selection {
 	 * @return bool
 	 */
 	private function sorted(string $source): bool {
-		return preg_match(sprintf('~%s~i', self::CLAUSE), $source) === 1;
+		return stripos($source, self::CLAUSE) !== false;
 	}
 
 	/**
