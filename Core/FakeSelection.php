@@ -17,10 +17,10 @@ final class FakeSelection implements Selection {
 		$this->criteria = $criteria;
 	}
 	public function expression(string $source): string {
-		return $this->expression;
+		return $source . $this->expression;
 	}
 
 	public function criteria(array $source): array {
-		return $this->criteria;
+		return array_merge($source, $this->criteria);
 	}
 }

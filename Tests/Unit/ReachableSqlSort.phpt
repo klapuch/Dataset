@@ -14,9 +14,9 @@ require __DIR__ . '/../bootstrap.php';
 final class ReachableSqlSort extends Tester\TestCase {
 	public function testReachableDirections() {
 		Assert::same(
-			'bar',
+			'foo bar',
 			(new Dataset\ReachableSqlSort(
-				new Dataset\FakeSelection('bar'),
+				new Dataset\FakeSelection(' bar'),
 				['name' => 'asc', 'number' => 'desc']
 			))->expression('foo')
 		);
