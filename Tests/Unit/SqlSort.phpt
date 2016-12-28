@@ -183,6 +183,31 @@ final class SqlSort extends Tester\TestCase {
 			(new Dataset\SqlSort(['name' => 'DESC']))->expression($source)
 		);
 	}
+
+	public function testApplyingToOuterQueryWithoutInnerMatch() {
+		$source = 'SELECT * FROM world WHERE name = (SELECT * FROM world WHERE number = 1)';
+		Assert::same(
+			'SELECT * FROM world WHERE name = (SELECT * FROM world WHERE number = 1) ORDER BY name DESC',
+			(new Dataset\SqlSort(['name' => 'DESC']))->expression($source)
+		);
+	}
+
+	/** TODO: Desired behavior
+	public function testApplyingToOuterQueryWithInnerLimitMatch() {
+		$source = 'SELECT * FROM world WHERE name = (SELECT * FROM world WHERE number = 1 LIMIT 4)';
+		Assert::same(
+			'SELECT * FROM world WHERE name = (SELECT * FROM world WHERE number = 1 LIMIT 4) ORDER BY name DESC',
+			(new Dataset\SqlSort(['name' => 'DESC']))->expression($source)
+		);
+	}
+
+	public function testApplyingToOuterQueryWithInnerMatch() {
+		$source = 'SELECT * FROM world WHERE name = (SELECT * FROM world ORDER BY foo)';
+		Assert::same(
+			'SELECT * FROM world WHERE name = (SELECT * FROM world ORDER BY foo) ORDER BY name DESC',
+			(new Dataset\SqlSort(['name' => 'DESC']))->expression($source)
+		);
+	}**/
 }
 
 
