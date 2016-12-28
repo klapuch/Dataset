@@ -151,6 +151,25 @@ final class SqlFilter extends Tester\TestCase {
 			)
 		);
 	}
+
+	/** TODO: Desired behavior
+	public function testApplyingToOuterQueryWithoutInnerMatch() {
+		Assert::same(
+			'SELECT * FROM (SELECT * FROM world) WHERE name = :name',
+			(new Dataset\SqlFilter(
+				[':name' => 'foo']
+			))->expression('SELECT * FROM (SELECT * FROM world)')
+		);
+	}
+
+	public function testApplyingToOuterQueryWithInnerMatch() {
+		Assert::same(
+			'SELECT * FROM (SELECT * FROM world WHERE number = :number) WHERE name = :name',
+			(new Dataset\SqlFilter(
+				[':name' => 'foo']
+			))->expression('SELECT * FROM (SELECT * FROM world WHERE number = :number)')
+		);
+	}*/
 }
 
 
