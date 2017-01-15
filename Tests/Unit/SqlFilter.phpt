@@ -146,9 +146,7 @@ final class SqlFilter extends Tester\TestCase {
 			'SELECT koňíček FROM staj WHERE koňíček = :koňíček ORDER BY koňíček',
 			(new Dataset\SqlFilter(
 				[':koňíček' => 'foo']
-			))->expression(
-				'SELECT koňíček FROM staj ORDER BY koňíček'
-			)
+			))->expression('SELECT koňíček FROM staj ORDER BY koňíček')
 		);
 	}
 

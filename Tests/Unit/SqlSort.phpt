@@ -68,7 +68,7 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testSamePassedAsStated() {
+	public function testNoDefectWithSamePassedAsStated() {
 		$source = 'SELECT * FROM world ORDER BY name DESC';
 		Assert::same(
 			'SELECT * FROM world ORDER BY name DESC',

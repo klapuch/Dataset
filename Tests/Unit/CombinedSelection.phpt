@@ -12,7 +12,7 @@ use Klapuch\Dataset;
 require __DIR__ . '/../bootstrap.php';
 
 final class CombinedSelection extends Tester\TestCase {
-	public function testCombiningExpressionInOrder() {
+	public function testCombiningExpressionInPassedOrder() {
 		Assert::same(
 			'SELECT * FROM world WHERE name = :name ORDER BY name DESC',
 			(new Dataset\CombinedSelection(
@@ -22,7 +22,7 @@ final class CombinedSelection extends Tester\TestCase {
 		);
 	}
 
-	public function testCombibningCriteriaInOrder() {
+	public function testCombibningCriteriaInPassedOrder() {
 		Assert::same(
 			[1, 2, 3],
 			(new Dataset\CombinedSelection(
