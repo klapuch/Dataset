@@ -16,7 +16,11 @@ final class SqlRange implements Selection {
 	}
 
 	public function expression(string $source): string {
-		return $this->put($this->limit, $this->offset, $source);
+		return $this->put(
+			$this->limit,
+			$this->offset,
+			trim(preg_replace('~\s+~', ' ', $source))
+		);
 	}
 
 	public function criteria(array $source): array {
@@ -33,7 +37,7 @@ final class SqlRange implements Selection {
 	private function put(int $limit, int $offset, string $source): string {
 		if($this->constrained($source))
 			return $this->replace($source, $limit, $offset);
-		return $source . ' ' . $this->clause($limit, $offset);
+		return $this->append($source, $limit, $offset);
 	}
 
 	/**
@@ -44,11 +48,29 @@ final class SqlRange implements Selection {
 	 * @return string
 	 */
 	private function replace(string $source, int $limit, int $offset): string {
-		return preg_replace(
-			'~(limit|offset) \d+\s?~i',
-			$this->clause($limit, $offset),
-			$source
+		preg_match(
+			'~LIMIT|OFFSET~i',
+			$source,
+			$matches,
+			PREG_OFFSET_CAPTURE
 		);
+		return substr_replace(
+			$source,
+			$this->clause($limit, $offset),
+			$matches[0][1],
+			strlen($source)
+		);
+	}
+
+	/**
+	 * Source with appended LIMIT and OFFSET
+	 * @param string $source
+	 * @param int $limit
+	 * @param int $offset
+	 * @return string
+	 */
+	private function append(string $source, int $limit, int $offset): string {
+		return $source . ' ' . $this->clause($limit, $offset);
 	}
 
 	/**
@@ -71,7 +93,6 @@ final class SqlRange implements Selection {
 	 * @return bool
 	 */
 	private function constrained(string $source): bool {
-		return stripos($source, 'limit') !== false
-		|| stripos($source, 'offset') !== false;
+		return (bool)preg_match('~(LIMIT|OFFSET)\s+\d+$~i', $source);
 	}
 }
