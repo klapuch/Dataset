@@ -20,6 +20,12 @@ final class ReachableSqlSort extends Tester\TestCase {
 				['name' => 'asc', 'number' => 'desc']
 			))->expression('foo')
 		);
+		Assert::noError(function() {
+			(new Dataset\ReachableSqlSort(
+				new Dataset\FakeSelection(' bar'),
+				['number' => 'desc']
+			))->expression('foo');
+		});
 	}
 
 	/**

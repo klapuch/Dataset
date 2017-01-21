@@ -40,16 +40,6 @@ final class ReachableSqlSort implements Selection {
 	 * @return bool
 	 */
 	private function reachable(array $sorts): bool {
-		return empty($sorts)
-			|| !array_diff(self::DIRECTIONS, $this->directions($sorts));
-	}
-
-	/**
-	 * All the extracted directions from the sorts
-	 * @param array $sorts
-	 * @return array
-	 */
-	private function directions(array $sorts): array {
-		return array_map('strtoupper', $sorts);
+		return !array_udiff($sorts, self::DIRECTIONS, 'strcasecmp');
 	}
 }
