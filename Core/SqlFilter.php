@@ -144,8 +144,8 @@ final class SqlFilter implements Selection {
 	 * @return string
 	 */
 	private function wrap(string $source, string $wrap, array $criteria): string {
-		[$begin, $end] = str_split($wrap);
-		return count($criteria) > 1 ? $begin . $source . $end : $source;
+		[$opening, $closing] = str_split($wrap);
+		return count($criteria) > 1 ? $opening . $source . $closing : $source;
 	}
 
 	/**
