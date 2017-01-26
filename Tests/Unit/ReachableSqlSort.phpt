@@ -12,7 +12,16 @@ use Klapuch\Dataset;
 require __DIR__ . '/../bootstrap.php';
 
 final class ReachableSqlSort extends Tester\TestCase {
-	public function testReachableDirections() {
+	public function testSingleReachableDirection() {
+		Assert::noError(function() {
+			(new Dataset\ReachableSqlSort(
+				new Dataset\FakeSelection(' bar'),
+				['number' => 'desc']
+			))->expression('foo');
+		});
+	}
+
+	public function testMultipleReachableDirections() {
 		Assert::same(
 			'foo bar',
 			(new Dataset\ReachableSqlSort(
@@ -20,12 +29,16 @@ final class ReachableSqlSort extends Tester\TestCase {
 				['name' => 'asc', 'number' => 'desc']
 			))->expression('foo')
 		);
-		Assert::noError(function() {
+	}
+
+	public function testManyReachableDirections() {
+		Assert::same(
+			'foo bar',
 			(new Dataset\ReachableSqlSort(
 				new Dataset\FakeSelection(' bar'),
-				['number' => 'desc']
-			))->expression('foo');
-		});
+				['name' => 'asc', 'number' => 'desc', 'foo' => 'asc']
+			))->expression('foo')
+		);
 	}
 
 	/**
@@ -45,6 +58,16 @@ final class ReachableSqlSort extends Tester\TestCase {
 		(new Dataset\ReachableSqlSort(
 			new Dataset\FakeSelection(),
 			['name' => 'up', 'number' => 'down']
+		))->expression('foo');
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
+	 */
+	public function testThrowingOnManyUnknownDirections() {
+		(new Dataset\ReachableSqlSort(
+			new Dataset\FakeSelection(),
+			['name' => 'up', 'number' => 'down', 'foo' => 'bar', 'baz' => 'bar']
 		))->expression('foo');
 	}
 
@@ -77,7 +100,7 @@ final class ReachableSqlSort extends Tester\TestCase {
 		))->expression('foo');
 	}
 
-	public function testEntirelyEmptySorts() {
+	public function testPassingOnEntirelyEmptySorts() {
 		Assert::noError(function() {
 			(new Dataset\ReachableSqlSort(
 				new Dataset\FakeSelection(''),
@@ -111,7 +134,7 @@ final class ReachableSqlSort extends Tester\TestCase {
 	/**
 	 * @throws \UnexpectedValueException Allowed directions are ASC, DESC
 	 */
-	public function testThrowingOnWhiteSpaceEmptyDirection() {
+	public function testThrowingOnWhiteSpaceOnlyEmptyDirection() {
 		(new Dataset\ReachableSqlSort(
 			new Dataset\FakeSelection(),
 			['name' => ' ']
