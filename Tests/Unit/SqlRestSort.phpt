@@ -17,6 +17,13 @@ final class SqlRestSort extends Tester\TestCase {
 		Assert::same('', (new Dataset\SqlRestSort('  '))->expression(''));
 	}
 
+	public function testNotAffectingCriteria() {
+		Assert::same(
+			['FOO'],
+			(new Dataset\SqlRestSort('-foo,foo,~bar'))->criteria(['FOO'])
+		);
+	}
+
 	public function testMinusAsDescend() {
 		Assert::same(
 			'ORDER BY foo desc',
