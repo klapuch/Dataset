@@ -20,6 +20,8 @@ final class SqlRestSort extends RestSort {
 	 * @return Selection
 	 */
 	private function selection(array $sorts): Selection {
-		return new ReachableSqlSort(new SqlSort($sorts), $sorts);
+		return new SafeSqlSelection(
+			new ReachableSqlSort(new SqlSort($sorts), $sorts), $sorts
+		);
 	}
 }

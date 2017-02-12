@@ -52,12 +52,8 @@ final class SqlRestSort extends Tester\TestCase {
 		);
 	}
 
-
-	public function testPassingWithInvalidFields() {
-		Assert::same(
-			'ORDER BY foo asc, #bar asc',
-			(new Dataset\SqlRestSort('foo,#bar'))->expression('')
-		);
+	public function testEmptyOutputOnInvalidOperator() {
+		Assert::same('', (new Dataset\SqlRestSort('foo,#bar'))->expression(''));
 	}
 
 	public function testTrimSpacesAroundDelimiters() {
