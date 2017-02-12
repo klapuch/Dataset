@@ -93,11 +93,7 @@ final class SqlSort implements Selection {
 	private function sorts(array $criteria): string {
 		return implode(
 			self::SEPARATOR,
-			array_map(
-				[$this, 'sort'],
-				array_keys($criteria),
-				$criteria
-			)
+			array_map([$this, 'sort'], array_keys($criteria), $criteria)
 		);
 	}
 
