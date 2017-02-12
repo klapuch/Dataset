@@ -15,7 +15,9 @@ final class SqlSort implements Selection {
 	}
 
 	public function expression(string $source): string {
-		return $this->put($this->criteria, preg_replace('~\s+~', ' ', $source));
+		if($this->criteria)
+			return $this->put($this->criteria, preg_replace('~\s+~', ' ', $source));
+		return $source;
 	}
 
 	public function criteria(array $source): array {

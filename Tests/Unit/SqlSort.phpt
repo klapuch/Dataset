@@ -19,10 +19,20 @@ final class SqlSort extends Tester\TestCase {
 		);
 	}
 
-	public function testEmptySortCriteria() {
+	public function testEmptySortCriteriaForNotStatedOrderClause() {
+		$sort = new Dataset\SqlSort([]);
 		Assert::same(
-			['name' => 'desc'],
-			(new Dataset\SqlSort([]))->criteria(['name' => 'desc'])
+			'SELECT * FROM foo',
+			$sort->expression('SELECT * FROM foo')
+		);
+		Assert::same(['name' => 'DESC'], $sort->criteria(['name' => 'DESC']));
+	}
+
+	public function testEmptySortCriteriaForStatedOrderClause() {
+		$sort = new Dataset\SqlSort([]);
+		Assert::same(
+			'SELECT * FROM foo ORDER BY bar',
+			$sort->expression('SELECT * FROM foo ORDER BY bar')
 		);
 	}
 
