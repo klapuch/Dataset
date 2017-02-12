@@ -34,7 +34,7 @@ abstract class RestSort implements Selection {
 			function(array $sorts, string $field): array {
 				$operator = $this->operator($field);
 				return $sorts + [
-					substr($field, strlen($operator)) => self::OPERATORS[$operator]
+					substr($field, strlen($operator)) => self::OPERATORS[$operator],
 				];
 			},
 			[]
