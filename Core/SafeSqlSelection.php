@@ -26,6 +26,11 @@ final class SafeSqlSelection implements Selection {
 		return $source;
 	}
 
+	/**
+	 * Are all the columns inside the criteria safe?
+	 * @param array $criteria
+	 * @return bool
+	 */
 	private function safe(array $criteria): bool {
 		$columns = array_keys($criteria);
 		return preg_grep('~^[a-zA-Z_][a-zA-Z0-9_]*\z~', $columns) === $columns;
