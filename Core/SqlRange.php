@@ -80,7 +80,11 @@ final class SqlRange implements Selection {
 	 * @return string
 	 */
 	private function clause(int $limit, int $offset): string {
-		return sprintf('LIMIT %d OFFSET %d', $limit, max($offset, self::BEGIN));
+		return sprintf(
+			'LIMIT %d OFFSET %d',
+			max($limit, 0),
+			max($offset, self::BEGIN)
+		);
 	}
 
 	/**

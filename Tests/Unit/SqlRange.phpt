@@ -30,9 +30,9 @@ final class SqlRange extends Tester\TestCase {
 		);
 	}
 
-	public function testArbitraryLimit() {
+	public function testRealLimit() {
 		Assert::same(
-			'SELECT * FROM world LIMIT -10 OFFSET 5',
+			'SELECT * FROM world LIMIT 0 OFFSET 5',
 			(new Dataset\SqlRange(-10, 5))->expression('SELECT * FROM world')
 		);
 	}
