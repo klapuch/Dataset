@@ -8,14 +8,16 @@ namespace Klapuch\Dataset;
 abstract class Paging implements Selection {
 	private $page;
 	private $perPage;
+	private $limit;
 
-	final public function __construct(int $page, int $perPage) {
+	final public function __construct(int $page, int $perPage, int $limit = 100) {
 		$this->page = $page;
 		$this->perPage = $perPage;
+		$this->limit = $limit;
 	}
 
 	final protected function limit(): int {
-		return $this->perPage;
+		return min($this->perPage, $this->limit);
 	}
 
 	final protected function offset(): int {
