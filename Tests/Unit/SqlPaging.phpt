@@ -36,6 +36,13 @@ final class SqlPaging extends Tester\TestCase {
 			(new Dataset\SqlPaging(300, 10, 30))->expression('SELECT * FROM world')
 		);
 	}
+
+	public function testUnrealPerPageWithDefaultFallback() {
+		Assert::same(
+			'SELECT * FROM world LIMIT 30 OFFSET 0',
+			(new Dataset\SqlPaging(1, 0, 30))->expression('SELECT * FROM world')
+		);
+	}
 }
 
 
