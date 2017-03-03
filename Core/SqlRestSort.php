@@ -6,6 +6,13 @@ namespace Klapuch\Dataset;
  * Sort working directly with REST sort format but exposing the SQL one
  */
 final class SqlRestSort extends RestSort {
+	private $allowedCriteria;
+
+	public function __construct(string $criteria, array $allowedCriteria) {
+		parent::__construct($criteria);
+		$this->allowedCriteria = $allowedCriteria;
+	}
+
 	public function expression(string $source): string {
 		return $this->selection($this->sorts())->expression($source);
 	}
@@ -21,7 +28,14 @@ final class SqlRestSort extends RestSort {
 	 */
 	private function selection(array $sorts): Selection {
 		return new SafeSqlSelection(
-			new ReachableSqlSort(new SqlSort($sorts), $sorts),
+			new AllowedSelection(
+				new SafeSqlSelection(
+					new ReachableSqlSort(new SqlSort($sorts), $sorts),
+					$sorts
+				),
+				array_keys($sorts),
+				$this->allowedCriteria
+			),
 			$sorts
 		);
 	}
