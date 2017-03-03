@@ -42,14 +42,14 @@ final class AllowedSelection implements Selection {
 	 * @return bool
 	 */
 	private function allowed(array $criteria, array $allowedCriteria): bool {
-		return !$this->diff($criteria, $this->allowedCriteria);
+		return !$this->diff($criteria, $allowedCriteria);
 	}
 
 	/**
 	 * Diff, if any between criteria and the allowed one
 	 * @param array $criteria
 	 * @param array $allowedCriteria
-	 * @return bool
+	 * @return array
 	 */
 	private function diff(array $criteria, array $allowedCriteria): array {
 		return array_udiff($criteria, $allowedCriteria, 'strcasecmp');

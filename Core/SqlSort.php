@@ -27,7 +27,7 @@ final class SqlSort implements Selection {
 	/**
 	 * Put the criteria to the source
 	 * @param array $criteria
-	 * @param string source
+	 * @param string $source
 	 * @return string
 	 */
 	private function put(array $criteria, string $source): string {
@@ -69,7 +69,7 @@ final class SqlSort implements Selection {
 		return trim(
 			preg_replace(
 				'~\s+(?=LIMIT|OFFSET|$)~i',
-				' ' . $this->clause($this->criteria) . ' ',
+				' ' . $this->clause($criteria) . ' ',
 				$source . ' ',
 				1
 			)

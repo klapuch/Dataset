@@ -62,7 +62,7 @@ final class SqlFilter implements Selection {
 		$clauses = $this->clauses($source);
 		return substr_replace(
 			$source,
-			self::SEPARATOR . $this->conditions($this->criteria),
+			self::SEPARATOR . $this->conditions($criteria),
 			$clauses[self::END_CLAUSES][self::POSITION] ?? strlen($source),
 			0
 		);
@@ -78,7 +78,7 @@ final class SqlFilter implements Selection {
 		$clauses = $this->clauses($source);
 		return substr_replace(
 			$source,
-			' ' . $this->clause($this->criteria) . ' ',
+			' ' . $this->clause($criteria) . ' ',
 			strlen($clauses[self::FROM][self::MATCH] ?? $source) + ($clauses[self::FROM][self::POSITION] ?? 0),
 			0
 		);
