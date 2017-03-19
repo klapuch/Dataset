@@ -7,6 +7,7 @@ namespace Klapuch\Dataset;
  */
 abstract class RestSort implements Selection {
 	private const DELIMITER = ',';
+	private const OPERATOR_LENGTH = 1;
 	private const DEFAULT_OPERATOR = '';
 	private const OPERATORS = [
 		self::DEFAULT_OPERATOR => 'asc',
@@ -28,7 +29,7 @@ abstract class RestSort implements Selection {
 			array_filter(
 				array_map('trim', explode(self::DELIMITER, $this->criteria)),
 				function(string $criteria): bool {
-					return strlen($criteria) > 1;
+					return strlen($criteria) > self::OPERATOR_LENGTH;
 				}
 			),
 			function(array $sorts, string $field): array {
@@ -47,7 +48,7 @@ abstract class RestSort implements Selection {
 	 * @return string
 	 */
 	private function operator(string $field): string {
-		$operator = substr($field, 0, 1);
+		$operator = substr($field, 0, self::OPERATOR_LENGTH);
 		return array_key_exists($operator, self::OPERATORS)
 			? $operator
 			: self::DEFAULT_OPERATOR;
