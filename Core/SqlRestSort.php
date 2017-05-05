@@ -24,7 +24,7 @@ final class SqlRestSort extends RestSort {
 	/**
 	 * Created selection
 	 * @param array $sorts
-	 * @return Selection
+	 * @return \Klapuch\Dataset\Selection
 	 */
 	private function selection(array $sorts): Selection {
 		return new SafeSqlSelection(

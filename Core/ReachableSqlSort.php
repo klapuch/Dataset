@@ -19,7 +19,7 @@ final class ReachableSqlSort implements Selection {
 	}
 
 	public function expression(string $source): string {
-		if(!$this->reachable($this->sorts)) {
+		if (!$this->reachable($this->sorts)) {
 			throw new \UnexpectedValueException(
 				sprintf(
 					'Allowed directions are %s',

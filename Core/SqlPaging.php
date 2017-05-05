@@ -8,7 +8,8 @@ namespace Klapuch\Dataset;
 final class SqlPaging extends Paging {
 	public function expression(string $source): string {
 		return (new SqlRange(
-			$this->limit(), $this->offset()
+			$this->limit(),
+			$this->offset()
 		))->expression($source);
 	}
 

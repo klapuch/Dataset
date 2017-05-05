@@ -1,13 +1,14 @@
 <?php
+declare(strict_types = 1);
 /**
  * @testCase
  * @phpVersion > 7.1
  */
 namespace Klapuch\Dataset\Unit;
 
+use Klapuch\Dataset;
 use Tester;
 use Tester\Assert;
-use Klapuch\Dataset;
 
 require __DIR__ . '/../bootstrap.php';
 

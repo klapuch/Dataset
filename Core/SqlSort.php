@@ -15,7 +15,7 @@ final class SqlSort implements Selection {
 	}
 
 	public function expression(string $source): string {
-		if($this->criteria)
+		if ($this->criteria)
 			return $this->put($this->criteria, preg_replace('~\s+~', ' ', $source));
 		return $source;
 	}
@@ -31,7 +31,7 @@ final class SqlSort implements Selection {
 	 * @return string
 	 */
 	private function put(array $criteria, string $source): string {
-		if($this->sorted($source))
+		if ($this->sorted($source))
 			return $this->replace($criteria, $source);
 		return $this->foist($criteria, $source);
 	}
@@ -97,6 +97,7 @@ final class SqlSort implements Selection {
 		);
 	}
 
+	// @codingStandardsIgnoreStart
 	/**
 	 * Single sort
 	 * @param string $column
@@ -106,4 +107,5 @@ final class SqlSort implements Selection {
 	private function sort(string $column, string $direction): string {
 		return sprintf('%s %s', $column, $direction);
 	}
+	// @codingStandardsIgnoreEnd
 }

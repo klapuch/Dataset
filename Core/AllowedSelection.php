@@ -21,7 +21,7 @@ final class AllowedSelection implements Selection {
 	}
 
 	public function expression(string $source): string {
-		if($this->allowed($this->criteria, $this->allowedCriteria))
+		if ($this->allowed($this->criteria, $this->allowedCriteria))
 			return $this->origin->expression($source);
 		throw new \UnexpectedValueException(
 			sprintf(

@@ -1,13 +1,14 @@
 <?php
+declare(strict_types = 1);
 /**
  * @testCase
  * @phpVersion > 7.1
  */
 namespace Klapuch\Dataset\Unit;
 
+use Klapuch\Dataset;
 use Tester;
 use Tester\Assert;
-use Klapuch\Dataset;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -82,7 +83,7 @@ final class SqlRange extends Tester\TestCase {
 		$source = 'SELECT * FROM world
 				LIMIT                  10
 					OFFSET  		20        ';
-		
+
 		Assert::same(
 			'SELECT * FROM world LIMIT 20 OFFSET 1',
 			(new Dataset\SqlRange(20, 1))->expression($source)

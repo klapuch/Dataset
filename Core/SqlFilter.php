@@ -38,7 +38,7 @@ final class SqlFilter implements Selection {
 	 * @return string
 	 */
 	private function put(array $criteria, string $source): string {
-		if($this->constrained($source))
+		if ($this->constrained($source))
 			return $this->extend($criteria, $source);
 		return $this->foist($criteria, $source);
 	}
@@ -148,6 +148,7 @@ final class SqlFilter implements Selection {
 		return count($criteria) > 1 ? $opening . $source . $closing : $source;
 	}
 
+	// @codingStandardsIgnoreStart
 	/**
 	 * Condition in form column = :placeholder
 	 * @param string $column
@@ -166,4 +167,5 @@ final class SqlFilter implements Selection {
 	private function column(string $field): string {
 		return str_replace(':', '', $field);
 	}
+	// @codingStandardsIgnoreEnd
 }
