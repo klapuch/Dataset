@@ -14,19 +14,20 @@ final class SqlRestSort extends RestSort {
 	}
 
 	public function expression(string $source): string {
-		return $this->selection($this->sorts())->expression($source);
+		return $this->selection($this->sorts(), $this->allowedCriteria)->expression($source);
 	}
 
 	public function criteria(array $source): array {
-		return $this->selection($this->sorts())->criteria($source);
+		return $this->selection($this->sorts(), $this->allowedCriteria)->criteria($source);
 	}
 
 	/**
 	 * Created selection
 	 * @param array $sorts
+	 * @param array $allowedCriteria
 	 * @return \Klapuch\Dataset\Selection
 	 */
-	private function selection(array $sorts): Selection {
+	private function selection(array $sorts, array $allowedCriteria): Selection {
 		return new SafeSqlSelection(
 			new AllowedSelection(
 				new SafeSqlSelection(
@@ -34,7 +35,7 @@ final class SqlRestSort extends RestSort {
 					$sorts
 				),
 				array_keys($sorts),
-				$this->allowedCriteria
+				$allowedCriteria
 			),
 			$sorts
 		);
