@@ -156,7 +156,7 @@ final class SqlFilter implements Selection {
 	 * @return string
 	 */
 	private function condition(string $column, string $placeholder): string {
-		return sprintf('%s = %s', $column, $placeholder);
+		return sprintf('%s = :%s', $column, ltrim($placeholder, ':'));
 	}
 
 	/**

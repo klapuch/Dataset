@@ -151,6 +151,15 @@ final class SqlFilter extends Tester\TestCase {
 		);
 	}
 
+	public function testColumnAsPlaceholder() {
+		Assert::same(
+			'SELECT * FROM world WHERE name = :name',
+			(new Dataset\SqlFilter(
+				['name' => 'foo']
+			))->expression('SELECT * FROM world')
+		);
+	}
+
 	/** TODO: Desired behavior
 	public function testApplyingToOuterQueryWithoutInnerMatch() {
 		Assert::same(
