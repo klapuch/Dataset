@@ -7,32 +7,22 @@ namespace Klapuch\Dataset;
  */
 final class SafeSqlSelection implements Selection {
 	private $origin;
-	private $criteria;
 
-	public function __construct(Selection $origin, array $criteria) {
+	public function __construct(Selection $origin) {
 		$this->origin = $origin;
-		$this->criteria = $criteria;
 	}
 
-	public function expression(string $source): string {
-		if ($this->safe($this->criteria))
-			return $this->origin->expression($source);
-		return $source;
+	public function criteria(): array {
+		$dangerous = $this->dangerous($this->origin->criteria());
+		if ($dangerous) {
+			throw new \UnexpectedValueException(
+				sprintf('There are some dangerous criteria: %s', implode(', ', $dangerous))
+			);
+		}
+		return $this->origin->criteria();
 	}
 
-	public function criteria(array $source): array {
-		if ($this->safe($this->criteria))
-			return $this->origin->criteria($source);
-		return $source;
-	}
-
-	/**
-	 * Are all the columns inside the criteria safe?
-	 * @param array $criteria
-	 * @return bool
-	 */
-	private function safe(array $criteria): bool {
-		$columns = array_keys($criteria);
-		return preg_grep('~^[a-zA-Z_][a-zA-Z0-9_]*\z~', $columns) === $columns;
+	private function dangerous(array $criteria): array {
+		return preg_grep('~^[a-zA-Z_][a-zA-Z0-9_]*\z~', array_keys($criteria), PREG_GREP_INVERT);
 	}
 }

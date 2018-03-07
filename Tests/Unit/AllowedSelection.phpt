@@ -21,7 +21,7 @@ final class AllowedSelection extends Tester\TestCase {
 			new Dataset\FakeSelection(),
 			['foo', 'bar'],
 			[]
-		))->expression('');
+		))->criteria();
 	}
 
 	/**
@@ -32,7 +32,7 @@ final class AllowedSelection extends Tester\TestCase {
 			new Dataset\FakeSelection(),
 			['foo', 'bar'],
 			['foo']
-		))->expression('');
+		))->criteria();
 	}
 
 	/**
@@ -43,49 +43,38 @@ final class AllowedSelection extends Tester\TestCase {
 			new Dataset\FakeSelection(),
 			['baz', 'bar'],
 			['foo']
-		))->expression('');
+		))->criteria();
 	}
 
-	public function testAllowingExactMatch() {
+	public function testAllowingExactAsMatch() {
 		Assert::same(
-			'XXX',
+			['xxx'],
 			(new Dataset\AllowedSelection(
-				new Dataset\FakeSelection('XXX'),
+				new Dataset\FakeSelection(['xxx']),
 				['bar', 'foo'],
 				['foo', 'bar']
-			))->expression('')
+			))->criteria()
 		);
 	}
 
 	public function testAllowingCaseInsensitiveMatch() {
 		Assert::noError(function() {
 			(new Dataset\AllowedSelection(
-				new Dataset\FakeSelection('XXX'),
+				new Dataset\FakeSelection(['xxx']),
 				['FoO', 'bar'],
 				['foo', 'BaR']
-			))->expression('');
+			))->criteria();
 		});
 	}
 
 	public function testAllowingEmptyCriteria() {
 		Assert::noError(function() {
 			(new Dataset\AllowedSelection(
-				new Dataset\FakeSelection('XXX'),
+				new Dataset\FakeSelection(['XXX']),
 				[],
 				['foo', 'bar']
-			))->expression('');
+			))->criteria();
 		});
-	}
-
-	public function testNoConstraintOnCriteria() {
-		Assert::same(
-			[],
-			(new Dataset\AllowedSelection(
-				new Dataset\FakeSelection(null, []),
-				['bar', 'foo'],
-				[]
-			))->criteria([])
-		);
 	}
 }
 

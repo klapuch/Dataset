@@ -13,23 +13,25 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 final class CombinedSelection extends Tester\TestCase {
-	public function testCombiningExpressionInPassedOrder() {
-		Assert::same(
-			'SELECT * FROM world WHERE name = :name ORDER BY name DESC',
-			(new Dataset\CombinedSelection(
-				new Dataset\FakeSelection(' WHERE name = :name'),
-				new Dataset\FakeSelection(' ORDER BY name DESC')
-			))->expression('SELECT * FROM world')
-		);
-	}
-
-	public function testCombibningCriteriaInPassedOrder() {
+	public function testCombiningCriteriaInPassedOrder() {
 		Assert::same(
 			[1, 2, 3],
 			(new Dataset\CombinedSelection(
-				new Dataset\FakeSelection(null, [2]),
-				new Dataset\FakeSelection(null, [3])
-			))->criteria([1])
+				new Dataset\FakeSelection([1]),
+				new Dataset\FakeSelection([2]),
+				new Dataset\FakeSelection([3])
+			))->criteria()
+		);
+	}
+
+	public function testCombiningNested() {
+		Assert::same(
+			['filter' => [1, 3], 'sort' => [2]],
+			(new Dataset\CombinedSelection(
+				new Dataset\FakeSelection(['filter' => [1]]),
+				new Dataset\FakeSelection(['sort' => [2]]),
+				new Dataset\FakeSelection(['filter' => [3]])
+			))->criteria()
 		);
 	}
 }

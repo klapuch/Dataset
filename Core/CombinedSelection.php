@@ -12,23 +12,14 @@ final class CombinedSelection implements Selection {
 		$this->selections = $selections;
 	}
 
-	public function expression(string $source): string {
-		return array_reduce(
-			$this->selections,
-			function(string $expression, Selection $selection): string {
-				return $selection->expression($expression);
-			},
-			$source
-		);
-	}
-
-	public function criteria(array $source): array {
-		return array_reduce(
-			$this->selections,
-			function(array $criteria, Selection $selection): array {
-				return $selection->criteria($criteria);
-			},
-			$source
+	public function criteria(): array {
+		return array_merge_recursive(
+			...array_map(
+				function(Selection $selection): array {
+					return $selection->criteria();
+				},
+				$this->selections
+			)
 		);
 	}
 }

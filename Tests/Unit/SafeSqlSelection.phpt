@@ -14,34 +14,28 @@ require __DIR__ . '/../bootstrap.php';
 
 final class SafeSqlSelection extends Tester\TestCase {
 	/**
-	 * @dataProvider validColumns
+	 * @dataProvider safeColumns
 	 */
-	public function testValidColumnsAffectingSources($columns) {
+	public function testPassingOnSafeColumns(array $columns) {
 		$selection = new Dataset\SafeSqlSelection(
-			new Dataset\FakeSelection('world', ['OK']),
-			array_combine($columns, array_fill(0, count($columns), 'foo'))
+			new Dataset\FakeSelection(array_combine($columns, array_fill(0, count($columns), mt_rand())))
 		);
-		Assert::same(
-			'SELECT * FROM world',
-			$selection->expression('SELECT * FROM ')
-		);
-		Assert::same(['FOO', 'OK'], $selection->criteria(['FOO']));
+		Assert::same($columns, array_keys($selection->criteria()));
 	}
 
 	/**
-	 * @dataProvider invalidColumns
+	 * @dataProvider dangerousColumns
 	 */
-	public function testInvalidColumnsNotAffectingSources($columns) {
-		[$sqlSource, $criteriaSource] = ['SELECT * FROM ', []];
+	public function testThrowingOnDangerousColumns(array $columns) {
 		$selection = new Dataset\SafeSqlSelection(
-			new Dataset\FakeSelection('world', ['OK']),
-			array_combine($columns, array_fill(0, count($columns), 'foo'))
+			new Dataset\FakeSelection(array_combine($columns, array_fill(0, count($columns), mt_rand())))
 		);
-		Assert::same($sqlSource, $selection->expression($sqlSource));
-		Assert::same($criteriaSource, $selection->criteria($criteriaSource));
+		Assert::exception(function () use ($selection) {
+			$selection->criteria();
+		}, \UnexpectedValueException::class);
 	}
 
-	protected function invalidColumns(): array {
+	protected function dangerousColumns(): array {
 		return [
 			[['']],
 			[[' ']],
@@ -66,7 +60,7 @@ final class SafeSqlSelection extends Tester\TestCase {
 		];
 	}
 
-	protected function validColumns(): array {
+	protected function safeColumns(): array {
 		return [
 			[['world']],
 			[['World']],

@@ -4,16 +4,8 @@ namespace Klapuch\Dataset;
 
 interface Selection {
 	/**
-	 * Expression of the selection
-	 * @param string $source
-	 * @return string
-	 */
-	public function expression(string $source): string;
-
-	/**
-	 * All the criteria related with the expression
-	 * @param array $source
+	 * All the criteria related with need of a user
 	 * @return array
 	 */
-	public function criteria(array $source): array;
+	public function criteria(): array;
 }

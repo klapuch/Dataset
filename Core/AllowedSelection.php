@@ -20,19 +20,15 @@ final class AllowedSelection implements Selection {
 		$this->allowedCriteria = $allowedCriteria;
 	}
 
-	public function expression(string $source): string {
+	public function criteria(): array {
 		if ($this->allowed($this->criteria, $this->allowedCriteria))
-			return $this->origin->expression($source);
+			return $this->origin->criteria();
 		throw new \UnexpectedValueException(
 			sprintf(
 				'Following criteria are not allowed: "%s"',
 				implode(', ', $this->diff($this->criteria, $this->allowedCriteria))
 			)
 		);
-	}
-
-	public function criteria(array $source): array {
-		return $this->origin->criteria($source);
 	}
 
 	/**

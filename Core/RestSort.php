@@ -5,14 +5,14 @@ namespace Klapuch\Dataset;
 /**
  * Sort for REST API accepting format: -foo,+bar,baz
  */
-abstract class RestSort implements Selection {
+final class RestSort extends Sort {
 	private const DELIMITER = ',';
 	private const OPERATOR_LENGTH = 1;
 	private const DEFAULT_OPERATOR = '';
 	private const OPERATORS = [
-		self::DEFAULT_OPERATOR => 'asc',
-		'-' => 'desc',
-		'+' => 'asc',
+		self::DEFAULT_OPERATOR => 'ASC',
+		'-' => 'DESC',
+		'+' => 'ASC',
 	];
 	private $criteria;
 
@@ -20,11 +20,7 @@ abstract class RestSort implements Selection {
 		$this->criteria = $criteria;
 	}
 
-	/**
-	 * All the transformed sorts
-	 * @return array
-	 */
-	final protected function sorts(): array {
+	protected function sort(): array {
 		return array_reduce(
 			array_filter(
 				array_map('trim', explode(self::DELIMITER, $this->criteria)),
