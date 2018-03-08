@@ -14,68 +14,78 @@ require __DIR__ . '/../bootstrap.php';
 
 final class RestSort extends Tester\TestCase {
 	public function testNoGivenSort() {
-		Assert::same(['sort' => []], (new Dataset\RestSort(''))->criteria());
-		Assert::same(['sort' => []], (new Dataset\RestSort('  '))->criteria());
+		Assert::same(['sort' => []], (new Dataset\RestSort('', []))->criteria());
+		Assert::same(['sort' => []], (new Dataset\RestSort('  ', []))->criteria());
 	}
 
 	public function testMinusAsDescend() {
 		Assert::same(
 			['sort' => ['foo' => 'DESC']],
-			(new Dataset\RestSort('-foo'))->criteria()
+			(new Dataset\RestSort('-foo', ['foo']))->criteria()
 		);
 	}
 
 	public function testPlusAsAscend() {
 		Assert::same(
 			['sort' => ['foo' => 'ASC']],
-			(new Dataset\RestSort('+foo'))->criteria()
+			(new Dataset\RestSort('+foo', ['foo']))->criteria()
 		);
 	}
 
 	public function testNoUnaryOperatorAsAscendByDefault() {
 		Assert::same(
 			['sort' => ['foo' => 'ASC']],
-			(new Dataset\RestSort('foo'))->criteria()
+			(new Dataset\RestSort('foo', ['foo']))->criteria()
 		);
 	}
 
 	public function testCombiningAllOperators() {
 		Assert::same(
 			['sort' => ['foo' => 'ASC', 'bar' => 'ASC', 'baz' => 'DESC']],
-			(new Dataset\RestSort('foo,+bar,-baz'))->criteria()
+			(new Dataset\RestSort('foo,+bar,-baz', ['foo', 'bar', 'baz']))->criteria()
 		);
 	}
 
 	public function testAcceptingFirstPassedValue() {
 		Assert::same(
 			['sort' => ['foo' => 'ASC']],
-			(new Dataset\RestSort('foo,+foo,-foo'))->criteria()
+			(new Dataset\RestSort('foo,+foo,-foo', ['foo']))->criteria()
 		);
 	}
 
 	public function testUnknownOperatorAsNormalValue() {
-		Assert::same(['sort' => ['foo' => 'ASC', '#bar' => 'ASC']], (new Dataset\RestSort('foo,#bar'))->criteria());
+		Assert::same(['sort' => ['foo' => 'ASC', '#bar' => 'ASC']], (new Dataset\RestSort('foo,#bar', ['foo', '#bar']))->criteria());
 	}
 
 	public function testTrimSpacesAroundDelimiters() {
 		Assert::same(
 			['sort' => ['foo' => 'ASC', 'bar' => 'ASC', 'baz' => 'DESC']],
-			(new Dataset\RestSort('foo , +bar , -baz'))->criteria()
+			(new Dataset\RestSort('foo , +bar , -baz', ['foo', 'bar', 'baz']))->criteria()
 		);
 	}
 
 	public function testRemovingTrailingDelimited() {
 		Assert::same(
 			['sort' => ['foo' => 'ASC', 'bar' => 'ASC', 'baz' => 'DESC']],
-			(new Dataset\RestSort('foo,+bar,-baz, '))->criteria()
+			(new Dataset\RestSort('foo,+bar,-baz, ', ['foo', 'bar', 'baz']))->criteria()
+		);
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Following criteria are not allowed: "foo"
+	 */
+	public function testThrowingOnNotAllowedCriteria() {
+		Assert::same(
+			['sort' => ['foo' => 'ASC', 'bar' => 'ASC', 'baz' => 'DESC']],
+			(new Dataset\RestSort('foo,+bar,-baz', ['bar', 'baz']))->criteria()
 		);
 	}
 
 	public function testEmptyOutputWithPassingOperatorWithoutField() {
-		Assert::same(['sort' => []], (new Dataset\RestSort('-'))->criteria());
-		Assert::same(['sort' => []], (new Dataset\RestSort('+'))->criteria());
-		Assert::same(['sort' => []], (new Dataset\RestSort('+ '))->criteria());
-		Assert::same(['sort' => []], (new Dataset\RestSort(' + '))->criteria());
+		Assert::same(['sort' => []], (new Dataset\RestSort('-', []))->criteria());
+		Assert::same(['sort' => []], (new Dataset\RestSort('+', []))->criteria());
+		Assert::same(['sort' => []], (new Dataset\RestSort('+ ', []))->criteria());
+		Assert::same(['sort' => []], (new Dataset\RestSort(' + ', []))->criteria());
 	}
 }
 

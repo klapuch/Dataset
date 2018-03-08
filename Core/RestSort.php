@@ -15,13 +15,15 @@ final class RestSort extends Sort {
 		'+' => 'ASC',
 	];
 	private $criteria;
+	private $allowedCriteria;
 
-	public function __construct(string $criteria) {
+	public function __construct(string $criteria, array $allowedCriteria) {
 		$this->criteria = $criteria;
+		$this->allowedCriteria = $allowedCriteria;
 	}
 
 	protected function sort(): array {
-		return array_reduce(
+		$sort = array_reduce(
 			array_filter(
 				array_map('trim', explode(self::DELIMITER, $this->criteria)),
 				function(string $criteria): bool {
@@ -31,11 +33,16 @@ final class RestSort extends Sort {
 			function(array $sorts, string $field): array {
 				$operator = $this->operator($field);
 				return $sorts + [
-					substr($field, strlen($operator)) => self::OPERATORS[$operator],
-				];
+						substr($field, strlen($operator)) => self::OPERATORS[$operator],
+					];
 			},
 			[]
 		);
+		return (new AllowedSelection(
+			new FakeSelection($sort),
+			array_keys($sort),
+			$this->allowedCriteria
+		))->criteria();
 	}
 
 	/**
