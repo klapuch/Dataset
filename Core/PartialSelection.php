@@ -41,7 +41,6 @@ final class PartialSelection implements Selection {
 		return $array1;
 	}
 
-
 	private function structure(string $part): array
 	{
 		$structure = [];
