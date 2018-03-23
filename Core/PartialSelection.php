@@ -50,7 +50,6 @@ final class PartialSelection implements Selection {
 		return $structure;
 	}
 
-
 	private function isArray($value): bool
 	{
 		return $value === (array) $value;
