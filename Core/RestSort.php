@@ -15,11 +15,11 @@ final class RestSort extends Sort {
 		'+' => 'ASC',
 	];
 	private $criteria;
-	private $allowedCriteria;
+	private $forbiddenCriteria;
 
-	public function __construct(string $criteria, array $allowedCriteria) {
+	public function __construct(string $criteria, array $forbiddenCriteria = []) {
 		$this->criteria = $criteria;
-		$this->allowedCriteria = $allowedCriteria;
+		$this->forbiddenCriteria = $forbiddenCriteria;
 	}
 
 	protected function sort(): array {
@@ -38,10 +38,9 @@ final class RestSort extends Sort {
 			},
 			[]
 		);
-		return (new AllowedSelection(
+		return (new ForbiddenSelection(
 			new FakeSelection($sort),
-			array_keys($sort),
-			$this->allowedCriteria
+			$this->forbiddenCriteria
 		))->criteria();
 	}
 

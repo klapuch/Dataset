@@ -7,14 +7,28 @@ namespace Klapuch\Dataset;
  */
 final class RestFilter extends Filter {
 	private $criteria;
-	private $allowedCriteria;
+	private $ignoredCriteria;
+	private $forbiddenCriteria;
 
-	public function __construct(array $criteria, array $allowedCriteria) {
+	public function __construct(
+		array $criteria,
+		array $ignoredCriteria = [],
+		array $forbiddenCriteria = []
+	) {
 		$this->criteria = $criteria;
-		$this->allowedCriteria = $allowedCriteria;
+		$this->ignoredCriteria = $ignoredCriteria;
+		$this->forbiddenCriteria = $forbiddenCriteria;
 	}
 
 	protected function filter(): array {
-		return array_intersect_key($this->criteria, array_flip($this->allowedCriteria));
+		return (new ForbiddenSelection(
+			new FakeSelection(
+				array_diff_key(
+					$this->criteria,
+					array_flip($this->ignoredCriteria)
+				)
+			),
+			$this->forbiddenCriteria
+		))->criteria();
 	}
 }
