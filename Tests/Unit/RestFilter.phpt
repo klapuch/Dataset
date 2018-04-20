@@ -20,23 +20,39 @@ final class RestFilter extends Tester\TestCase {
 	public function testAppliedFilter() {
 		Assert::same(
 			['filter' => ['name' => 'bar']],
-			(new Dataset\RestFilter(['name' => 'bar'], ['name']))->criteria()
+			(new Dataset\RestFilter(['name' => 'bar']))->criteria()
 		);
 	}
 
-	public function testTakingOnlyAllowed() {
+	public function testSkippingIgnored() {
 		Assert::same(
 			['filter' => ['name' => 'bar']],
-			(new Dataset\RestFilter(['name' => 'bar', 'foo' => 'no'], ['name']))->criteria()
+			(new Dataset\RestFilter(['name' => 'bar', 'title' => 'baz'], ['title']))->criteria()
 		);
 	}
 
-	public function testNoMatchingAsEmpty() {
-		Assert::same(['filter' => []], (new Dataset\RestFilter(['foo' => 'no'], ['name']))->criteria());
+	public function testSkippingAllLeadingToEmptyFilter() {
+		Assert::same(['filter' => []], (new Dataset\RestFilter(['name' => 'bar'], ['name']))->criteria());
 	}
 
-	public function testNoAllowedCriteriaAsEmptyArray() {
-		Assert::same(['filter' => []], (new Dataset\RestFilter(['foo' => 'no'], []))->criteria());
+	public function testIgnoringUnknownKeys() {
+		Assert::same(
+			['filter' => ['name' => 'bar']],
+			(new Dataset\RestFilter(['name' => 'bar'], ['foo']))->criteria()
+		);
+	}
+
+	/**
+	 * @throws \UnexpectedValueException Following criteria are not allowed: "name"
+	 */
+	public function testThrowingOnForbiddenCriteria() {
+		(new Dataset\RestFilter(['name' => 'bar'], [], ['name']))->criteria();
+	}
+
+	public function testSkippingBeforeForbidden() {
+		Assert::noError(function() {
+			(new Dataset\RestFilter(['name' => 'bar'], ['name'], ['name']))->criteria();
+		});
 	}
 }
 
