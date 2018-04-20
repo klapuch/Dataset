@@ -20,8 +20,7 @@ final class RestFilter extends Filter {
 		$this->forbiddenCriteria = $forbiddenCriteria;
 	}
 
-	protected function filter(): array
-	{
+	protected function filter(): array {
 		return (new ForbiddenSelection(
 			new FakeSelection(
 				array_diff_key(
