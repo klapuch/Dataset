@@ -5,9 +5,9 @@ namespace Klapuch\Dataset;
 use Klapuch\Sql;
 
 /**
- * Clause using Selection for building SQL with bind parameters
+ * Statement using Selection for building SQL with bind parameters
  */
-final class SelectiveClause implements Sql\Clause {
+final class SelectiveStatement implements Sql\Statement {
 	private $origin;
 	private $selection;
 
@@ -24,7 +24,7 @@ final class SelectiveClause implements Sql\Clause {
 		return $this->statement($this->selection->criteria())->parameters();
 	}
 
-	private function statement(array $criteria): Sql\Clause {
+	private function statement(array $criteria): Sql\Statement {
 		[$filter, $sort, $paging] = [
 			$criteria['filter'] ?? [],
 			$criteria['sort'] ?? [],

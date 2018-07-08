@@ -13,10 +13,10 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-final class SelectiveClause extends Tester\TestCase {
+final class SelectiveStatement extends Tester\TestCase {
 	public function testOrderOfStatements() {
-		$clause = new Dataset\SelectiveClause(
-			new Sql\AnsiWhere(new Sql\FakeClause(), 'foo = :bar', ['bar' => 10]),
+		$statement = new Dataset\SelectiveStatement(
+			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
 			new Dataset\FakeSelection(
 				[
 					'filter' => ['name' => 'Dom'],
@@ -27,38 +27,38 @@ final class SelectiveClause extends Tester\TestCase {
 		);
 		Assert::same(
 			' WHERE foo = :bar AND name = :name ORDER BY age ASC LIMIT 10 OFFSET 4',
-			$clause->sql()
+			$statement->sql()
 		);
-		Assert::same(['bar' => 10, 'name' => 'Dom'], $clause->parameters()->binds());
+		Assert::same(['bar' => 10, 'name' => 'Dom'], $statement->parameters()->binds());
 	}
 
 	public function testFilterRelatedStatement() {
-		$clause = new Dataset\SelectiveClause(
-			new Sql\AnsiWhere(new Sql\FakeClause(), 'foo = :bar', ['bar' => 10]),
+		$statement = new Dataset\SelectiveStatement(
+			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
 			new Dataset\FakeSelection(['filter' => ['name' => 'Dom', 'age' => 20]])
 		);
-		Assert::same(' WHERE foo = :bar AND name = :name AND age = :age', $clause->sql());
-		Assert::same(['bar' => 10, 'name' => 'Dom', 'age' => 20], $clause->parameters()->binds());
+		Assert::same(' WHERE foo = :bar AND name = :name AND age = :age', $statement->sql());
+		Assert::same(['bar' => 10, 'name' => 'Dom', 'age' => 20], $statement->parameters()->binds());
 	}
 
 	public function testSortRelatedStatement() {
-		$clause = new Dataset\SelectiveClause(
-			new Sql\AnsiWhere(new Sql\FakeClause(), 'foo = :bar', ['bar' => 10]),
+		$statement = new Dataset\SelectiveStatement(
+			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
 			new Dataset\FakeSelection(['sort' => ['name' => 'ASC', 'age' => 'DESC']])
 		);
-		Assert::same(' WHERE foo = :bar ORDER BY name ASC, age DESC', $clause->sql());
-		Assert::same(['bar' => 10], $clause->parameters()->binds());
+		Assert::same(' WHERE foo = :bar ORDER BY name ASC, age DESC', $statement->sql());
+		Assert::same(['bar' => 10], $statement->parameters()->binds());
 	}
 
 	public function testPagingRelatedStatement() {
-		$clause = new Dataset\SelectiveClause(
-			new Sql\AnsiWhere(new Sql\FakeClause(), 'foo = :bar', ['bar' => 10]),
+		$statement = new Dataset\SelectiveStatement(
+			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
 			new Dataset\FakeSelection(['paging' => ['limit' => 20, 'offset' => 5]])
 		);
-		Assert::same(' WHERE foo = :bar LIMIT 20 OFFSET 5', $clause->sql());
-		Assert::same(['bar' => 10], $clause->parameters()->binds());
+		Assert::same(' WHERE foo = :bar LIMIT 20 OFFSET 5', $statement->sql());
+		Assert::same(['bar' => 10], $statement->parameters()->binds());
 	}
 }
 
 
-(new SelectiveClause())->run();
+(new SelectiveStatement())->run();
