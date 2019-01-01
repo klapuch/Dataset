@@ -1,9 +1,11 @@
 <?php
 declare(strict_types = 1);
+
 /**
  * @testCase
  * @phpVersion > 7.2
  */
+
 namespace Klapuch\Dataset\Unit;
 
 use Klapuch\Dataset;
@@ -30,7 +32,7 @@ final class SafeSqlSelection extends Tester\TestCase {
 		$selection = new Dataset\SafeSqlSelection(
 			new Dataset\FakeSelection(array_combine($columns, array_fill(0, count($columns), mt_rand())))
 		);
-		Assert::exception(function () use ($selection) {
+		Assert::exception(static function () use ($selection) {
 			$selection->criteria();
 		}, \UnexpectedValueException::class);
 	}

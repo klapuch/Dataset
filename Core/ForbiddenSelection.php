@@ -1,12 +1,16 @@
 <?php
 declare(strict_types = 1);
+
 namespace Klapuch\Dataset;
 
 /**
  * Selection consisted only from the desired criteria
  */
 final class ForbiddenSelection implements Selection {
+	/** @var \Klapuch\Dataset\Selection */
 	private $origin;
+
+	/** @var mixed[] */
 	private $forbiddenCriteria;
 
 	public function __construct(Selection $origin, array $forbiddenCriteria) {

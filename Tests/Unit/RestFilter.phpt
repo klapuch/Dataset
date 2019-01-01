@@ -1,9 +1,11 @@
 <?php
 declare(strict_types = 1);
+
 /**
  * @testCase
  * @phpVersion > 7.2
  */
+
 namespace Klapuch\Dataset\Unit;
 
 use Klapuch\Dataset;
@@ -50,7 +52,7 @@ final class RestFilter extends Tester\TestCase {
 	}
 
 	public function testSkippingBeforeForbidden() {
-		Assert::noError(function() {
+		Assert::noError(static function() {
 			(new Dataset\RestFilter(['name' => 'bar'], ['name'], ['name']))->criteria();
 		});
 	}

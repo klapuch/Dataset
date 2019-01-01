@@ -1,13 +1,19 @@
 <?php
 declare(strict_types = 1);
+
 namespace Klapuch\Dataset;
 
 /**
  * Filter for GET parameters
  */
 final class RestFilter extends Filter {
+	/** @var mixed[] */
 	private $criteria;
+
+	/** @var mixed[] */
 	private $ignoredCriteria;
+
+	/** @var mixed[] */
 	private $forbiddenCriteria;
 
 	public function __construct(

@@ -1,13 +1,19 @@
 <?php
 declare(strict_types = 1);
+
 namespace Klapuch\Dataset;
 
 /**
  * Paging for REST API
  */
 final class RestPaging extends Paging {
+	/** @var int */
 	private $page;
+
+	/** @var int */
 	private $perPage;
+
+	/** @var int */
 	private $default;
 
 	public function __construct(int $page, int $perPage, int $default = 100) {

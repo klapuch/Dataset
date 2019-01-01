@@ -1,5 +1,6 @@
 <?php
 declare(strict_types = 1);
+
 namespace Klapuch\Dataset;
 
 /**
@@ -14,7 +15,11 @@ final class RestSort extends Sort {
 		'-' => 'DESC',
 		'+' => 'ASC',
 	];
+
+	/** @var string */
 	private $criteria;
+
+	/** @var mixed[] */
 	private $forbiddenCriteria;
 
 	public function __construct(string $criteria, array $forbiddenCriteria = []) {
@@ -26,15 +31,15 @@ final class RestSort extends Sort {
 		$sort = array_reduce(
 			array_filter(
 				array_map('trim', explode(self::DELIMITER, $this->criteria)),
-				function(string $criteria): bool {
+				static function(string $criteria): bool {
 					return strlen($criteria) > self::OPERATOR_LENGTH;
 				}
 			),
 			function(array $sorts, string $field): array {
 				$operator = $this->operator($field);
 				return $sorts + [
-						substr($field, strlen($operator)) => self::OPERATORS[$operator],
-					];
+					substr($field, strlen($operator)) => self::OPERATORS[$operator],
+				];
 			},
 			[]
 		);

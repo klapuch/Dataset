@@ -1,9 +1,11 @@
 <?php
 declare(strict_types = 1);
+
 /**
  * @testCase
  * @phpVersion > 7.2
  */
+
 namespace Klapuch\Dataset\Unit;
 
 use Klapuch\Dataset;

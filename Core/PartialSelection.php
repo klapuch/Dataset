@@ -1,12 +1,16 @@
 <?php
 declare(strict_types = 1);
+
 namespace Klapuch\Dataset;
 
 /**
  * Selection for partial response
  */
 final class PartialSelection implements Selection {
+	/** @var string */
 	private $path;
+
+	/** @var mixed[] */
 	private $source;
 
 	public function __construct(string $path, array $source) {
@@ -15,7 +19,7 @@ final class PartialSelection implements Selection {
 	}
 
 	public function criteria(): array {
-		if (!strlen($this->path))
+		if (strlen($this->path) === 0)
 			return $this->source;
 		return $this->intersection(
 			$this->source,
@@ -36,8 +40,8 @@ final class PartialSelection implements Selection {
 	{
 		$array1 = array_intersect_key($array1, $array2);
 		foreach ($array1 as $key => &$value)
-			if ($this->isArray($value))
-				$value = $this->isArray($array2[$key]) ? $this->intersection($value, $array2[$key]) : $value;
+			if (is_array($value))
+				$value = is_array($array2[$key]) ? $this->intersection($value, $array2[$key]) : $value;
 		return $array1;
 	}
 
@@ -48,10 +52,5 @@ final class PartialSelection implements Selection {
 		foreach (explode('.', $part) as $segment)
 			$current = &$current[$segment];
 		return $structure;
-	}
-
-	private function isArray($value): bool
-	{
-		return $value === (array) $value;
 	}
 }

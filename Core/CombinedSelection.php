@@ -1,11 +1,13 @@
 <?php
 declare(strict_types = 1);
+
 namespace Klapuch\Dataset;
 
 /**
  * Multiple selections combined together acting like a huge single one
  */
 final class CombinedSelection implements Selection {
+	/** @var \Klapuch\Dataset\Selection[] */
 	private $selections;
 
 	public function __construct(Selection ...$selections) {
@@ -15,7 +17,7 @@ final class CombinedSelection implements Selection {
 	public function criteria(): array {
 		return array_merge_recursive(
 			...array_map(
-				function(Selection $selection): array {
+				static function(Selection $selection): array {
 					return $selection->criteria();
 				},
 				$this->selections
