@@ -39,10 +39,11 @@ final class SelectiveStatement implements Sql\Statement {
 		return array_reduce(
 			array_keys($filter),
 			static function (Sql\Selection $sql, string $parameter) use ($filter): Sql\Where {
-				return $sql->where(
-					sprintf('%1$s = :%1$s', $parameter),
-					[$parameter => $filter[$parameter]]
-				);
+				$value = $filter[$parameter];
+				if (is_array($value)) {
+					return $sql->whereIn($parameter, [$parameter => $value]);
+				}
+				return $sql->where(sprintf('%1$s = :%1$s', $parameter), [$parameter => $value]);
 			},
 			$this->origin
 		)->orderBy($sort)->limit($paging['limit'] ?? \PHP_INT_MAX)->offset($paging['offset'] ?? 0);

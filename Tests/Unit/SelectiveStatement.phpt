@@ -60,6 +60,15 @@ final class SelectiveStatement extends Tester\TestCase {
 		Assert::same(' WHERE foo = :bar LIMIT 20 OFFSET 5', $statement->sql());
 		Assert::same(['bar' => 10], $statement->parameters()->binds());
 	}
+
+	public function testArrayValueToInClause() {
+		$statement = new Dataset\SelectiveStatement(
+			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
+			new Dataset\FakeSelection(['filter' => ['name' => 'Dom', 'age' => [10, 20]]])
+		);
+		Assert::same(' WHERE foo = :bar AND name = :name AND age IN (:age_0, :age_1)', $statement->sql());
+		Assert::same(['bar' => 10, 'name' => 'Dom', ':age_0' => 10, ':age_1' => 20], $statement->parameters()->binds());
+	}
 }
 
 
