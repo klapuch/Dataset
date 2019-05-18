@@ -8,6 +8,8 @@ declare(strict_types = 1);
 
 namespace Klapuch\Dataset\Unit;
 
+use Characterice\Sql\Expression;
+use Characterice\Sql\Statement\Select;
 use Klapuch\Dataset;
 use Klapuch\Sql;
 use Tester;
@@ -16,9 +18,9 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 final class SelectiveStatement extends Tester\TestCase {
-	public function testOrderOfStatements() {
+	public function testApplying() {
 		$statement = new Dataset\SelectiveStatement(
-			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
+			(new Select\Query())->select(new Expression\Select(['firstname']))->from(new Expression\From(['world'])),
 			new Dataset\FakeSelection(
 				[
 					'filter' => ['name' => 'Dom'],
@@ -28,46 +30,19 @@ final class SelectiveStatement extends Tester\TestCase {
 			)
 		);
 		Assert::same(
-			' WHERE foo = :bar AND name = :name ORDER BY age ASC LIMIT 10 OFFSET 4',
+			'SELECT firstname FROM world WHERE name = :name ORDER BY age ASC LIMIT 10 OFFSET 4',
 			$statement->sql()
 		);
-		Assert::same(['bar' => 10, 'name' => 'Dom'], $statement->parameters()->binds());
-	}
-
-	public function testFilterRelatedStatement() {
-		$statement = new Dataset\SelectiveStatement(
-			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
-			new Dataset\FakeSelection(['filter' => ['name' => 'Dom', 'age' => 20]])
-		);
-		Assert::same(' WHERE foo = :bar AND name = :name AND age = :age', $statement->sql());
-		Assert::same(['bar' => 10, 'name' => 'Dom', 'age' => 20], $statement->parameters()->binds());
-	}
-
-	public function testSortRelatedStatement() {
-		$statement = new Dataset\SelectiveStatement(
-			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
-			new Dataset\FakeSelection(['sort' => ['name' => 'ASC', 'age' => 'DESC']])
-		);
-		Assert::same(' WHERE foo = :bar ORDER BY name ASC, age DESC', $statement->sql());
-		Assert::same(['bar' => 10], $statement->parameters()->binds());
-	}
-
-	public function testPagingRelatedStatement() {
-		$statement = new Dataset\SelectiveStatement(
-			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
-			new Dataset\FakeSelection(['paging' => ['limit' => 20, 'offset' => 5]])
-		);
-		Assert::same(' WHERE foo = :bar LIMIT 20 OFFSET 5', $statement->sql());
-		Assert::same(['bar' => 10], $statement->parameters()->binds());
+		Assert::same(['name' => 'Dom'], $statement->parameters());
 	}
 
 	public function testArrayValueToInClause() {
 		$statement = new Dataset\SelectiveStatement(
-			new Sql\AnsiWhere(new Sql\FakeStatement(), 'foo = :bar', ['bar' => 10]),
+			(new Select\Query())->select(new Expression\Select(['firstname']))->from(new Expression\From(['world'])),
 			new Dataset\FakeSelection(['filter' => ['name' => 'Dom', 'age' => [10, 20]]])
 		);
-		Assert::same(' WHERE foo = :bar AND name = :name AND age IN (:age_0, :age_1)', $statement->sql());
-		Assert::same(['bar' => 10, 'name' => 'Dom', ':age_0' => 10, ':age_1' => 20], $statement->parameters()->binds());
+		Assert::same('SELECT firstname FROM world WHERE name = :name AND age IN (:age__1, :age__2)', $statement->sql());
+		Assert::same(['name' => 'Dom', ':age__1' => 10, ':age__2' => 20], $statement->parameters()->binds());
 	}
 }
 
