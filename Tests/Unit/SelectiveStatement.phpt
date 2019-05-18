@@ -41,7 +41,7 @@ final class SelectiveStatement extends Tester\TestCase {
 			new Dataset\FakeSelection(['filter' => ['name' => 'Dom', 'age' => [10, 20]]])
 		);
 		Assert::same('SELECT firstname FROM world WHERE name = :name AND age IN (:age__1, :age__2)', $statement->sql());
-		Assert::same(['name' => 'Dom', ':age__1' => 10, ':age__2' => 20], $statement->parameters()->binds());
+		Assert::same(['name' => 'Dom', 'age__1' => 10, 'age__2' => 20], $statement->parameters());
 	}
 }
 
