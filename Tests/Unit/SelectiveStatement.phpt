@@ -11,7 +11,6 @@ namespace Klapuch\Dataset\Unit;
 use Characterice\Sql\Expression;
 use Characterice\Sql\Statement\Select;
 use Klapuch\Dataset;
-use Klapuch\Sql;
 use Tester;
 use Tester\Assert;
 
