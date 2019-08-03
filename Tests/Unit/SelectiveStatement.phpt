@@ -8,8 +8,8 @@ declare(strict_types = 1);
 
 namespace Klapuch\Dataset\Unit;
 
-use Characterice\Sql\Expression;
-use Characterice\Sql\Statement\Select;
+use Klapuch\Sql\Expression;
+use Klapuch\Sql\Statement\Select;
 use Klapuch\Dataset;
 use Tester;
 use Tester\Assert;

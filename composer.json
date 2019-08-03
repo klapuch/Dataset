@@ -13,7 +13,7 @@
 	],
 	"require": {
 		"php": ">=7.3",
-        "characterice/sql": "*"
+        "klapuch/sql": "*"
 	},
 	"require-dev": {
 		"nette/tester": "^2.0",

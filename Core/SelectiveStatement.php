@@ -3,15 +3,15 @@ declare(strict_types = 1);
 
 namespace Klapuch\Dataset;
 
-use Characterice\Sql\Expression;
-use Characterice\Sql\Statement\Select;
-use Characterice\Sql\Statement\Statement;
+use Klapuch\Sql\Expression;
+use Klapuch\Sql\Statement\Select;
+use Klapuch\Sql\Statement\Statement;
 
 /**
  * Statement using Selection for building SQL with bind parameters
  */
 final class SelectiveStatement extends Statement {
-	/** @var \Characterice\Sql\Statement\Select\Query */
+	/** @var \Klapuch\Sql\Statement\Select\Query */
 	private $origin;
 
 	/** @var \Klapuch\Dataset\Selection */
